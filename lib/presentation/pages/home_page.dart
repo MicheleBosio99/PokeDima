@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   late Widget bodyWidget;
   Widget cardsCollectionPage = const CardsCollection();
   late Widget pokemonGridPage;
-  Widget scannerPage = const Scanner();
+  late Widget scannerPage;
   Widget socialNotificationsPage = const SocialNotifications();
 
   final List<Widget> _pages = [];
@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     pokemonGridPage = PokemonGrid(changeBodyWidget: changeBodyWidget);
+    scannerPage = Scanner(changeBodyWidget: changeBodyWidget);
 
     _pages.add(cardsCollectionPage);
     _pages.add(pokemonGridPage);
@@ -36,10 +37,10 @@ class _HomePageState extends State<HomePage> {
     bodyWidget = _pages[_currentIndex];
   }
 
-  void changeBodyWidget(Widget newWidget) {
+  void changeBodyWidget(Widget newWidget, {int index = -1}) {
     setState(() {
-      _currentIndex = -1;
-      bodyWidget = newWidget;
+      bodyWidget = index != -1 ? _pages[index] : newWidget;
+      _currentIndex = index;
     });
   }
 

@@ -44,6 +44,9 @@ dependencies:
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   shared_preferences: ^2.2.2
+  camera: ^0.10.5+9
+  google_mlkit_text_recognition: ^0.11.0
+  permission_handler: ^11.2.0
   # image_picker: ^1.0.7
   # google_ml_kit: ^0.16.3
 

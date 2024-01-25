@@ -1,0 +1,30 @@
+# Android
+android/
+.build/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.iws
+*.iws.*
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# Flutter
+**/build/
+**/ios/Pods/
+**/ios/Runner.xcworkspace/
+
+# Dart
+**/pubspec.lock
+**/dart_tool/
+**/flutter_gen/
+
+# macOS
+.DS_Store
+
+# Linux
+Thumbs.db

@@ -1,5 +1,5 @@
-import 'dart:ui';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:pokedex_dima_new/domain/pokemon_type.dart';
 
 part 'pokemon.freezed.dart';
 part 'pokemon.g.dart';
@@ -8,42 +8,37 @@ part 'pokemon.g.dart';
 class Pokemon with _$Pokemon {
   const factory Pokemon({
     required String name,
-    required PokemonID id,
-    required String imageUrl,
-    required String xDescription,
+    required String id,
+    @JsonKey(name: 'imageurl') required String imageUrl,
+    @JsonKey(name: 'xdescription') required String xDescription,
     required String height,
     required String weight,
-    required List<Type> types,
-    required List<Type> weaknesses,
+    // @JsonKey(name: 'typeofpokemon') required List<String> typesString,
+    @Default([]) @JsonKey(name: "typeofpokemon") List<PokemonType> pokemonTypes,
+    @Default([]) required List<PokemonType> weaknesses,
     required List<String> evolutions,
-    required Statistics statistics,
-    required String evolvedFrom,
-  }) = _Pokemon;
-}
-
-@freezed
-class Type with _$Type {
-  const factory Type({
-    required String name,
-    required Color color,
-  }) = _Type;
-}
-
-@freezed
-class Statistics with _$Statistics {
-  const factory Statistics({
     required int hp,
     required int attack,
     required int defense,
-    required int specialAttack,
-    required int specialDefense,
+    @JsonKey(name: 'special_attack') required int specialAttack,
+    @JsonKey(name: 'special_defense') required int specialDefense,
     required int speed,
-  }) = _Statistics;
+    @JsonKey(name: 'evolvedfrom') required String evolvedFrom,
+  }) = _Pokemon;
+
+  factory Pokemon.fromJson(Map<String, dynamic> json) => _$PokemonFromJson(json);
 }
 
-@freezed
-class PokemonID with _$PokemonID {
-  const factory PokemonID({
-    required String id,
-  }) = _PokemonID;
-}
+// @freezed
+// class Statistics with _$Statistics {
+//   const factory Statistics({
+//     required int hp,
+//     required int attack,
+//     required int defense,
+//     @JsonKey(name: 'special_attack') required int specialAttack,
+//     @JsonKey(name: 'special_defense') required int specialDefense,
+//     required int speed,
+//   }) = _Statistics;
+//
+//   factory Statistics.fromJson(Map<String, dynamic> json) => _$StatisticsFromJson(json);
+// }

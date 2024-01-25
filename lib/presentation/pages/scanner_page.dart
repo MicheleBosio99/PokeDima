@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+
 class Scanner extends StatefulWidget {
+
   const Scanner({super.key});
 
   @override
@@ -8,6 +10,7 @@ class Scanner extends StatefulWidget {
 }
 
 class _ScannerState extends State<Scanner> {
+
   @override
   Widget build(BuildContext context) {
     return const Placeholder();

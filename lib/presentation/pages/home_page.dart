@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:pokedex_dima_new/application/services/auth_service.dart';
+import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
 import 'package:pokedex_dima_new/icons/poke_dima_icons.dart';
 import 'package:pokedex_dima_new/presentation/pages/scanner_page.dart';
 import 'package:pokedex_dima_new/presentation/pages/social_page.dart';
 import 'package:pokedex_dima_new/presentation/pages/user_card_collection.dart';
+import 'package:pokedex_dima_new/presentation/widgets/pokemon_cards_grid.dart';
 import 'package:pokedex_dima_new/presentation/widgets/pokemon_grid.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,7 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   late Widget bodyWidget;
-  Widget cardsCollectionPage = const CardsCollection();
+  late Widget cardsCollectionPage;
   late Widget pokemonGridPage;
   late Widget scannerPage;
   Widget socialNotificationsPage = const SocialNotifications();
@@ -26,6 +27,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    cardsCollectionPage = PokemonCardsGrid(changeBodyWidget: changeBodyWidget);
     pokemonGridPage = PokemonGrid(changeBodyWidget: changeBodyWidget);
     scannerPage = Scanner(changeBodyWidget: changeBodyWidget);
 

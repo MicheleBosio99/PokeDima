@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex_dima_new/application/services/auth_service.dart';
+import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
 import 'package:pokedex_dima_new/presentation/pages/shared/common_functions.dart';
 import 'package:pokedex_dima_new/presentation/pages/shared/graphics_constants.dart';
 import 'package:pokedex_dima_new/presentation/pages/shared/loading.dart';
@@ -81,7 +81,7 @@ class _RegisterState extends State<Register> {
                         if(_formKey.currentState!.validate()){
                           setState(() => loading = true);
                           try {
-                            await _auth.registerWithEmailAndPassword(email, password);
+                            await _auth.registerWithEmailAndPassword(email, "Berol99", password);
                           } catch (e) {
                             setState(() {
                               loading = false;

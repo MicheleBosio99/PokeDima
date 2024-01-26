@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex_dima_new/application/services/auth_service.dart';
+import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
 import 'package:pokedex_dima_new/presentation/pages/shared/common_functions.dart';
 import 'package:pokedex_dima_new/presentation/pages/shared/graphics_constants.dart';
 import 'package:pokedex_dima_new/presentation/pages/shared/loading.dart';

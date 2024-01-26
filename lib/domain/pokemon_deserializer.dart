@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:pokedex_dima_new/application/pokemon_provider.dart';
+import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/domain/pokemon.dart';
 
 class PokemonDeserializer {
+
+  static Future<String> _loadJsonData() async {
+    return await rootBundle.loadString('lib/data/json/pokemons.json');
+  }
 
   static Future<void> deserializeAndSetProviderData(PokemonProvider pokemonProvider) async {
     final String jsonString = await _loadJsonData();
@@ -14,9 +18,5 @@ class PokemonDeserializer {
         .toList();
 
     pokemonProvider.setPokemonList(pokemonList);
-  }
-
-  static Future<String> _loadJsonData() async {
-    return await rootBundle.loadString('lib/json/pokemons.json');
   }
 }

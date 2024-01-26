@@ -1,8 +1,15 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.dart';
+import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
+import 'package:pokedex_dima_new/domain/pokemon.dart';
+import 'package:pokedex_dima_new/domain/pokemon_card.dart';
+import 'package:provider/provider.dart';
 
 class Scanner extends StatefulWidget {
 
@@ -52,6 +59,9 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final pokemonProvider = Provider.of<PokemonProvider>(context);
+    final pokemonList = pokemonProvider.pokemonList;
+
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
@@ -77,7 +87,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
                                     padding: const EdgeInsets.only(bottom: 20.0),
                                     child: Center(
                                       child: ElevatedButton(
-                                        onPressed: _scanImage,
+                                        onPressed: () { _scanImage(pokemonList) ;},
                                         style: ElevatedButton.styleFrom(
                                           fixedSize: const Size(150, 55),
                                           foregroundColor: Colors.grey[300],
@@ -176,7 +186,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
     setState(() {});
   }
 
-  Future<void> _scanImage() async {
+  Future<void> _scanImage(List<Pokemon> pokemonList) async {
     if (_cameraController == null) { return; }
 
     try {
@@ -186,14 +196,52 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
       final recognizedText = await textRecognizer.processImage(inputImage);
 
       // TODO: Create new card and show it inside the card_collection_info.dart
-      widget.changeBodyWidget();
 
-    } catch (e) {
+      var _recognizedPokemon;
+      for (int i = 0; i < pokemonList.length; i ++) {
+        if(recognizedText.text.contains(pokemonList[i].name)) {
+          _recognizedPokemon = pokemonList[i];
+          break;
+        }
+      }
+
+      if(_recognizedPokemon == null) {
+        throw PokemonNotFoundException("Pokemon not found");
+      }
+
+      // TODO: try to retrieve more informations about the card
+
+      print(_recognizedPokemon);
+
+      Uint8List byteCardImage = inputImage.bytes == null ? Uint8List(0) : inputImage.bytes!;
+
+      // Create new pokemonCard
+      final newPokemonCard = PokemonCard(
+          pokemonName: _recognizedPokemon.name,
+          numInBatch: "01/69",
+          imageBytes: byteCardImage,
+          relativePokemon: _recognizedPokemon
+      );
+
+      // Add new card to the cardsProvider
+      PokemonCardsProvider().addPokemonCard(newPokemonCard);
+
+      // Serialize and add the card to the firebase cloud collection -> Update followers of the new card
+
+      // Visualize the new card inside a pokemon_card_info.dart
+      // widget.changeBodyWidget(PokemonCardInfoPage);
+
+    } on PokemonNotFoundException {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('An error occurred when scanning text'),
+          content: Center(child: Text("Something went wrong, retry...")),
         ),
       );
     }
   }
+}
+
+class PokemonNotFoundException implements Exception {
+  String text;
+  PokemonNotFoundException(this.text);
 }

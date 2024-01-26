@@ -47,6 +47,9 @@ dependencies:
   camera: ^0.10.5+9
   google_mlkit_text_recognition: ^0.11.0
   permission_handler: ^11.2.0
+  image: ^4.1.4
+  json_serializable: ^6.7.1
+  convert: ^3.1.1
   # image_picker: ^1.0.7
   # google_ml_kit: ^0.16.3
 
@@ -62,7 +65,6 @@ dev_dependencies:
   flutter_lints: ^3.0.1
   build_runner: ^2.4.8
   freezed: ^2.4.6
-  json_serializable: ^6.7.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -78,7 +80,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - lib/icons/
-    - lib/json/
+    - lib/data/json/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

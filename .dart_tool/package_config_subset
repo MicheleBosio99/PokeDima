@@ -30,6 +30,10 @@ analyzer
 3.0
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/analyzer-6.2.0/
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/analyzer-6.2.0/lib/
+archive
+2.12
+file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/archive-3.4.10/
+file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/archive-3.4.10/lib/
 args
 2.19
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/args-2.4.2/
@@ -238,6 +242,10 @@ http_parser
 2.12
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/http_parser-4.0.2/
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/http_parser-4.0.2/lib/
+image
+2.15
+file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/image-4.1.4/
+file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/image-4.1.4/lib/
 io
 2.12
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/io-1.0.4/
@@ -326,6 +334,10 @@ permission_handler_windows
 2.12
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/permission_handler_windows-0.2.1/
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/permission_handler_windows-0.2.1/lib/
+petitparser
+3.2
+file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/petitparser-6.0.2/
+file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/petitparser-6.0.2/lib/
 platform
 3.0
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/platform-3.1.4/
@@ -334,6 +346,10 @@ plugin_platform_interface
 3.0
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.8/
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.8/lib/
+pointycastle
+3.0
+file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/pointycastle-3.7.4/
+file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/pointycastle-3.7.4/lib/
 pool
 2.12
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/pool-1.5.1/
@@ -454,6 +470,10 @@ xdg_directories
 3.0
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/xdg_directories-1.0.4/
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/xdg_directories-1.0.4/lib/
+xml
+3.2
+file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/xml-6.5.0/
+file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/xml-6.5.0/lib/
 yaml
 2.19
 file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/yaml-3.1.2/

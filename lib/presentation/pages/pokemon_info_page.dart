@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex_dima_new/application/pokemon_provider.dart';
+import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/domain/pokemon.dart';
 import 'package:pokedex_dima_new/presentation/widgets/favourite_icon.dart';
 import 'package:pokedex_dima_new/presentation/widgets/pokemon_grid.dart';
@@ -74,7 +74,7 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                     child: IconButton(
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () {
-                        widget.changeBodyWidget(PokemonGrid(changeBodyWidget: widget.changeBodyWidget));
+                        widget.changeBodyWidget(PokemonGrid(changeBodyWidget: widget.changeBodyWidget), index: 1);
                       },
                     ),
                   ),

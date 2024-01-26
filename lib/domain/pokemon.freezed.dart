@@ -463,7 +463,7 @@ abstract class _Pokemon implements Pokemon {
           required final String height,
           required final String weight,
           @JsonKey(name: "typeofpokemon") final List<PokemonType> pokemonTypes,
-          required final List<PokemonType> weaknesses,
+          final List<PokemonType> weaknesses,
           required final List<String> evolutions,
           required final int hp,
           required final int attack,

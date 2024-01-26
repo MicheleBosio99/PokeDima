@@ -15,7 +15,7 @@ class Pokemon with _$Pokemon {
     required String weight,
     // @JsonKey(name: 'typeofpokemon') required List<String> typesString,
     @Default([]) @JsonKey(name: "typeofpokemon") List<PokemonType> pokemonTypes,
-    @Default([]) required List<PokemonType> weaknesses,
+    @Default([]) List<PokemonType> weaknesses,
     required List<String> evolutions,
     required int hp,
     required int attack,

@@ -3,6 +3,7 @@ import 'package:pokedex_dima_new/presentation/pages/authentication/register.dart
 import 'package:pokedex_dima_new/presentation/pages/authentication/sign_in.dart';
 
 class Authenticate extends StatefulWidget {
+
   @override
   _AuthenticateState createState() => _AuthenticateState();
 }

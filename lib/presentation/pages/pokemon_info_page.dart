@@ -82,8 +82,8 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                 Align(
                   alignment: Alignment.topRight,
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: FavouriteIcon(pokemonName: pokemon.name,),
+                    padding: const EdgeInsets.only(top: 10.0, right: 2.0),
+                    child: FavouriteIcon(pokemonName: pokemon.name, favouriteType: "pokemon",),
                   ),
                 ),
               ],

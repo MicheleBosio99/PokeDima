@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pokedex_dima_new/domain/pokemon.dart';
 
@@ -9,27 +9,45 @@ part 'pokemon_card.g.dart';
 class PokemonCard with _$PokemonCard {
 
   const factory PokemonCard({
+    required String id, // #klm format
     required String pokemonName,
     required String numInBatch,
-    @Uint8ListConverter()  required Uint8List imageBytes,
-    required Pokemon relativePokemon,
+    required String imageUrl,
+    required bool stillOwned,
 
   }) = _PokemonCard;
 
   factory PokemonCard.fromJson(Map<String, dynamic> json) => _$PokemonCardFromJson(json);
 
-}
-
-class Uint8ListConverter implements JsonConverter<Uint8List, List<int>> {
-  const Uint8ListConverter();
-
   @override
-  Uint8List fromJson(List<int> json) {
-    return Uint8List.fromList(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'cardId': id,
+      'pokemonName': pokemonName,
+      'numInBatch': numInBatch,
+      'imageUrl': imageUrl,
+      'stillOwned': stillOwned,
+    };
   }
 
-  @override
-  List<int> toJson(Uint8List object) {
-    return object.toList();
+  factory PokemonCard.fromFirestore(Map<String, dynamic> json, Pokemon relativePokemon) {
+    return PokemonCard(
+      id: json['cardId'],
+      pokemonName: json['pokemonName'],
+      numInBatch: json['numInBatch'],
+      imageUrl: json['imageUrl'],
+      stillOwned: json['stillOwned'],
+    );
+  }
+
+  factory PokemonCard.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot, Pokemon relativePokemon) {
+    Map<String, dynamic> data = snapshot.data() ?? {};
+    return PokemonCard(
+      id: data['cardId'] ?? '',
+      pokemonName: data['pokemonName'] ?? '',
+      numInBatch: data['numInBatch'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
+      stillOwned: data['stillOwned'] ?? false,
+    );
   }
 }

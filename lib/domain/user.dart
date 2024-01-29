@@ -2,5 +2,9 @@
 
 class UserAuthInfo {
   final String uid;
-  UserAuthInfo({ required this.uid });
+  final String email;
+  final String lastSignInTime;
+  final String creationTime;
+
+  UserAuthInfo({ required this.uid, required this.email, required this.lastSignInTime, required this.creationTime });
 }

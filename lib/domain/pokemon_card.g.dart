@@ -8,18 +8,18 @@ part of 'pokemon_card.dart';
 
 _$PokemonCardImpl _$$PokemonCardImplFromJson(Map<String, dynamic> json) =>
     _$PokemonCardImpl(
+      id: json['id'] as String,
       pokemonName: json['pokemonName'] as String,
       numInBatch: json['numInBatch'] as String,
-      imageBytes:
-          const Uint8ListConverter().fromJson(json['imageBytes'] as List<int>),
-      relativePokemon:
-          Pokemon.fromJson(json['relativePokemon'] as Map<String, dynamic>),
+      imageUrl: json['imageUrl'] as String,
+      stillOwned: json['stillOwned'] as bool,
     );
 
 Map<String, dynamic> _$$PokemonCardImplToJson(_$PokemonCardImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'pokemonName': instance.pokemonName,
       'numInBatch': instance.numInBatch,
-      'imageBytes': const Uint8ListConverter().toJson(instance.imageBytes),
-      'relativePokemon': instance.relativePokemon,
+      'imageUrl': instance.imageUrl,
+      'stillOwned': instance.stillOwned,
     };

@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pokedex_dima_new/domain/pokemon_type.dart';
 
-part 'pokemon.freezed.dart';
-part 'pokemon.g.dart';
+part 'freezed_generated/pokemon.freezed.dart';
+part 'freezed_generated/pokemon.g.dart';
 
 @freezed
 class Pokemon with _$Pokemon {

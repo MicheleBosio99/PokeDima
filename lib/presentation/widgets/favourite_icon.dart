@@ -4,7 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class FavouriteIcon extends StatefulWidget {
 
   final String pokemonName;
-  const FavouriteIcon({required this.pokemonName, super.key});
+  final String favouriteType;
+  const FavouriteIcon({super.key, required this.pokemonName, required this.favouriteType});
 
   @override
   _FavouriteIconState createState() => _FavouriteIconState();
@@ -14,7 +15,7 @@ class _FavouriteIconState extends State<FavouriteIcon> {
 
   late bool isFavourite;
   late Future<List<String>> favouritePokemons;
-  final Favourites favPokemons = Favourites();
+  late final Favourites favPokemons = Favourites(favouriteType: widget.favouriteType);
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _FavouriteIconState extends State<FavouriteIcon> {
           return IconButton(
             icon: Icon(
               isFavourite ? Icons.star : Icons.star_border,
+              size: 32,
               color: isFavourite ? Colors.yellow : null,
             ),
             onPressed: () => toggleFavourite(currentFavourites),
@@ -62,17 +64,19 @@ class _FavouriteIconState extends State<FavouriteIcon> {
 
 
 class Favourites {
-  Favourites();
+
+  final favouriteType;
+  Favourites({ required this.favouriteType});
 
   Future<void> saveFavourites(List<String> favourites) async {
     final prefs = await SharedPreferences.getInstance();
     final serializedList = favourites.join(';');
-    await prefs.setString('favouritePokemonsList', serializedList);
+    await prefs.setString('favourite$favouriteType', serializedList);
   }
 
   Future<List<String>> loadFavourites() async {
     final prefs = await SharedPreferences.getInstance();
-    final serializedList = prefs.getString('favouritePokemonsList') ?? '';
+    final serializedList = prefs.getString('favourite$favouriteType') ?? '';
     return serializedList.split(';');
   }
 }

@@ -6,6 +6,11 @@ class PokemonCardsProvider extends ChangeNotifier {
   List<PokemonCard> _pokemonCardsList = [];
   List<PokemonCard> get pokemonCardsList => _pokemonCardsList;
 
+  void resetPokemonCardsList() {
+    _pokemonCardsList = [];
+    notifyListeners();
+  }
+
   void setPokemonCardsList(List<PokemonCard> pokemonCards) {
     _pokemonCardsList = pokemonCards;
     notifyListeners();
@@ -14,6 +19,10 @@ class PokemonCardsProvider extends ChangeNotifier {
   void addPokemonCard(PokemonCard pokemonCard) {
     _pokemonCardsList.add(pokemonCard);
     notifyListeners();
+  }
+
+  PokemonCard getPokemonCardById(String cardId) {
+    return _pokemonCardsList.firstWhere((element) => element.id == cardId);
   }
 
   // TODO: filters

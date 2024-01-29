@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
-import 'package:pokedex_dima_new/domain/pokemon_deserializer.dart';
 import 'package:pokedex_dima_new/domain/user.dart';
 import 'package:pokedex_dima_new/presentation/pages/home_page_wrapper.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +23,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -32,24 +31,18 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => PokemonProvider()),
         ChangeNotifierProvider(create: (context) => PokemonCardsProvider()),
         StreamProvider<UserAuthInfo?>.value(
-          value: AuthService().user,
+          value: AuthServices().user,
           initialData: null,
           catchError: (_, __) => null,
         ),
       ],
       child: Builder(
         builder: (context) {
-          _loadPokemonData(context);
           return MaterialApp(
             home: HomePageWrapper(),
           );
         },
       ),
     );
-  }
-
-  Future<void> _loadPokemonData(BuildContext context) async {
-    final pokemonProvider = Provider.of<PokemonProvider>(context, listen: false);
-    await PokemonDeserializer.deserializeAndSetProviderData(pokemonProvider);
   }
 }

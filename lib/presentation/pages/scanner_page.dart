@@ -1,14 +1,19 @@
-import 'dart:typed_data';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
+import 'package:pokedex_dima_new/data/firebase_cloud_services/firebase_cloud_services.dart';
+import 'package:pokedex_dima_new/data/firebase_storage_services/firebase_storage_services.dart';
 import 'package:pokedex_dima_new/domain/pokemon.dart';
 import 'package:pokedex_dima_new/domain/pokemon_card.dart';
+import 'package:pokedex_dima_new/domain/user.dart';
+import 'package:pokedex_dima_new/presentation/pages/pokemon_card_info_page.dart';
 import 'package:provider/provider.dart';
 
 class Scanner extends StatefulWidget {
@@ -187,12 +192,17 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   }
 
   Future<void> _scanImage(List<Pokemon> pokemonList) async {
+    final storageServices = FirebaseStorageServices();
+    final authServices = AuthServices();
+    final cloudServices = FirebaseCloudServices();
+
+
     if (_cameraController == null) { return; }
 
     try {
       final pictureFile = await _cameraController!.takePicture();
-      final file = File(pictureFile.path);
-      final inputImage = InputImage.fromFile(file);
+      final imageFile = File(pictureFile.path);
+      final inputImage = InputImage.fromFile(imageFile);
       final recognizedText = await textRecognizer.processImage(inputImage);
 
       // TODO: Create new card and show it inside the card_collection_info.dart
@@ -209,27 +219,32 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
         throw PokemonNotFoundException("Pokemon not found");
       }
 
-      // TODO: try to retrieve more informations about the card
+      // TODO: try to get more information about the card
 
-      print(_recognizedPokemon);
+      // final tfLiteMethods = TFLiteMethods();
+      // tfLiteMethods.loadTFLiteModel();
+      // tfLiteMethods.runTFLiteOnImage(imageFile);
 
-      Uint8List byteCardImage = inputImage.bytes == null ? Uint8List(0) : inputImage.bytes!;
+      final user = Provider.of<UserAuthInfo?>(context, listen: false);
+      final username = await authServices.getUsernameUsingEmail(user!.email);
+      final imageName = _recognizedPokemon.name;
+      final imageUrl = await storageServices.uploadImageToUserFolder(username!, imageFile, imageName);
+      final cardsProvider = Provider.of<PokemonCardsProvider?>(context, listen: false);
+      if(cardsProvider == null) { throw Exception("No cards provider found."); }
 
-      // Create new pokemonCard
       final newPokemonCard = PokemonCard(
-          pokemonName: _recognizedPokemon.name,
-          numInBatch: "01/69",
-          imageBytes: byteCardImage,
-          relativePokemon: _recognizedPokemon
+        id: getNextId(cardsProvider.pokemonCardsList.isEmpty ? "#000" : cardsProvider.pokemonCardsList.last.id),
+        pokemonName: _recognizedPokemon.name,
+        numInBatch: getRandomBatchNumber(),
+        imageUrl: imageUrl,
+        stillOwned: true,
       );
 
-      // Add new card to the cardsProvider
-      PokemonCardsProvider().addPokemonCard(newPokemonCard);
+      cardsProvider.addPokemonCard(newPokemonCard);
 
-      // Serialize and add the card to the firebase cloud collection -> Update followers of the new card
+      await cloudServices.addPokemonCardToFirestore(username, newPokemonCard);
 
-      // Visualize the new card inside a pokemon_card_info.dart
-      // widget.changeBodyWidget(PokemonCardInfoPage);
+      widget.changeBodyWidget(PokemonCardInfoPage(pokemonCard: newPokemonCard, changeBodyWidget: widget.changeBodyWidget,));
 
     } on PokemonNotFoundException {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -237,7 +252,22 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
           content: Center(child: Text("Something went wrong, retry...")),
         ),
       );
+    } on Exception catch (e) {
+      print(e);
     }
+  }
+
+  String getRandomBatchNumber() {
+    final random = Random();
+    final num = random.nextInt(128);
+    return "${random.nextInt(num)}/$num";
+  }
+
+  getNextId(String? id) {
+    if(id == null) { return "#999"; }
+    int originalNumber = int.parse(id.substring(1));
+    int incrementedNumber = originalNumber + 1;
+    return "#${incrementedNumber.toString().padLeft(3, '0')}";
   }
 }
 

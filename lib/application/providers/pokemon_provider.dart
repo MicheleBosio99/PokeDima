@@ -6,6 +6,11 @@ class PokemonProvider extends ChangeNotifier {
   List<Pokemon> _pokemonList = [];
   List<Pokemon> get pokemonList => _pokemonList;
 
+  void resetPokemonList() {
+    _pokemonList = [];
+    notifyListeners();
+  }
+
   void setPokemonList(List<Pokemon> list) {
     _pokemonList = list;
     notifyListeners();
@@ -13,6 +18,10 @@ class PokemonProvider extends ChangeNotifier {
 
   Pokemon? getPokemonById(String id) {
     return _pokemonList.firstWhere((pokemon) => pokemon.id == id);
+  }
+
+  Pokemon? getPokemonByName(String name) {
+    return _pokemonList.firstWhere((pokemon) => pokemon.name == name);
   }
 
   void filterPokemonListByTypes(List<String> pokemonWantedTypes) {

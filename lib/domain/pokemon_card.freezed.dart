@@ -20,11 +20,11 @@ PokemonCard _$PokemonCardFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$PokemonCard {
+  String get id => throw _privateConstructorUsedError; // #klm format
   String get pokemonName => throw _privateConstructorUsedError;
   String get numInBatch => throw _privateConstructorUsedError;
-  @Uint8ListConverter()
-  Uint8List get imageBytes => throw _privateConstructorUsedError;
-  Pokemon get relativePokemon => throw _privateConstructorUsedError;
+  String get imageUrl => throw _privateConstructorUsedError;
+  bool get stillOwned => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -39,12 +39,11 @@ abstract class $PokemonCardCopyWith<$Res> {
       _$PokemonCardCopyWithImpl<$Res, PokemonCard>;
   @useResult
   $Res call(
-      {String pokemonName,
+      {String id,
+      String pokemonName,
       String numInBatch,
-      @Uint8ListConverter() Uint8List imageBytes,
-      Pokemon relativePokemon});
-
-  $PokemonCopyWith<$Res> get relativePokemon;
+      String imageUrl,
+      bool stillOwned});
 }
 
 /// @nodoc
@@ -60,12 +59,17 @@ class _$PokemonCardCopyWithImpl<$Res, $Val extends PokemonCard>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? pokemonName = null,
     Object? numInBatch = null,
-    Object? imageBytes = null,
-    Object? relativePokemon = null,
+    Object? imageUrl = null,
+    Object? stillOwned = null,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       pokemonName: null == pokemonName
           ? _value.pokemonName
           : pokemonName // ignore: cast_nullable_to_non_nullable
@@ -74,23 +78,15 @@ class _$PokemonCardCopyWithImpl<$Res, $Val extends PokemonCard>
           ? _value.numInBatch
           : numInBatch // ignore: cast_nullable_to_non_nullable
               as String,
-      imageBytes: null == imageBytes
-          ? _value.imageBytes
-          : imageBytes // ignore: cast_nullable_to_non_nullable
-              as Uint8List,
-      relativePokemon: null == relativePokemon
-          ? _value.relativePokemon
-          : relativePokemon // ignore: cast_nullable_to_non_nullable
-              as Pokemon,
+      imageUrl: null == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      stillOwned: null == stillOwned
+          ? _value.stillOwned
+          : stillOwned // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $PokemonCopyWith<$Res> get relativePokemon {
-    return $PokemonCopyWith<$Res>(_value.relativePokemon, (value) {
-      return _then(_value.copyWith(relativePokemon: value) as $Val);
-    });
   }
 }
 
@@ -103,13 +99,11 @@ abstract class _$$PokemonCardImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String pokemonName,
+      {String id,
+      String pokemonName,
       String numInBatch,
-      @Uint8ListConverter() Uint8List imageBytes,
-      Pokemon relativePokemon});
-
-  @override
-  $PokemonCopyWith<$Res> get relativePokemon;
+      String imageUrl,
+      bool stillOwned});
 }
 
 /// @nodoc
@@ -123,12 +117,17 @@ class __$$PokemonCardImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? pokemonName = null,
     Object? numInBatch = null,
-    Object? imageBytes = null,
-    Object? relativePokemon = null,
+    Object? imageUrl = null,
+    Object? stillOwned = null,
   }) {
     return _then(_$PokemonCardImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       pokemonName: null == pokemonName
           ? _value.pokemonName
           : pokemonName // ignore: cast_nullable_to_non_nullable
@@ -137,14 +136,14 @@ class __$$PokemonCardImplCopyWithImpl<$Res>
           ? _value.numInBatch
           : numInBatch // ignore: cast_nullable_to_non_nullable
               as String,
-      imageBytes: null == imageBytes
-          ? _value.imageBytes
-          : imageBytes // ignore: cast_nullable_to_non_nullable
-              as Uint8List,
-      relativePokemon: null == relativePokemon
-          ? _value.relativePokemon
-          : relativePokemon // ignore: cast_nullable_to_non_nullable
-              as Pokemon,
+      imageUrl: null == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      stillOwned: null == stillOwned
+          ? _value.stillOwned
+          : stillOwned // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -153,27 +152,30 @@ class __$$PokemonCardImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PokemonCardImpl implements _PokemonCard {
   const _$PokemonCardImpl(
-      {required this.pokemonName,
+      {required this.id,
+      required this.pokemonName,
       required this.numInBatch,
-      @Uint8ListConverter() required this.imageBytes,
-      required this.relativePokemon});
+      required this.imageUrl,
+      required this.stillOwned});
 
   factory _$PokemonCardImpl.fromJson(Map<String, dynamic> json) =>
       _$$PokemonCardImplFromJson(json);
 
   @override
+  final String id;
+// #klm format
+  @override
   final String pokemonName;
   @override
   final String numInBatch;
   @override
-  @Uint8ListConverter()
-  final Uint8List imageBytes;
+  final String imageUrl;
   @override
-  final Pokemon relativePokemon;
+  final bool stillOwned;
 
   @override
   String toString() {
-    return 'PokemonCard(pokemonName: $pokemonName, numInBatch: $numInBatch, imageBytes: $imageBytes, relativePokemon: $relativePokemon)';
+    return 'PokemonCard(id: $id, pokemonName: $pokemonName, numInBatch: $numInBatch, imageUrl: $imageUrl, stillOwned: $stillOwned)';
   }
 
   @override
@@ -181,20 +183,21 @@ class _$PokemonCardImpl implements _PokemonCard {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PokemonCardImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.pokemonName, pokemonName) ||
                 other.pokemonName == pokemonName) &&
             (identical(other.numInBatch, numInBatch) ||
                 other.numInBatch == numInBatch) &&
-            const DeepCollectionEquality()
-                .equals(other.imageBytes, imageBytes) &&
-            (identical(other.relativePokemon, relativePokemon) ||
-                other.relativePokemon == relativePokemon));
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl) &&
+            (identical(other.stillOwned, stillOwned) ||
+                other.stillOwned == stillOwned));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, pokemonName, numInBatch,
-      const DeepCollectionEquality().hash(imageBytes), relativePokemon);
+  int get hashCode => Object.hash(
+      runtimeType, id, pokemonName, numInBatch, imageUrl, stillOwned);
 
   @JsonKey(ignore: true)
   @override
@@ -212,23 +215,25 @@ class _$PokemonCardImpl implements _PokemonCard {
 
 abstract class _PokemonCard implements PokemonCard {
   const factory _PokemonCard(
-      {required final String pokemonName,
+      {required final String id,
+      required final String pokemonName,
       required final String numInBatch,
-      @Uint8ListConverter() required final Uint8List imageBytes,
-      required final Pokemon relativePokemon}) = _$PokemonCardImpl;
+      required final String imageUrl,
+      required final bool stillOwned}) = _$PokemonCardImpl;
 
   factory _PokemonCard.fromJson(Map<String, dynamic> json) =
       _$PokemonCardImpl.fromJson;
 
   @override
+  String get id;
+  @override // #klm format
   String get pokemonName;
   @override
   String get numInBatch;
   @override
-  @Uint8ListConverter()
-  Uint8List get imageBytes;
+  String get imageUrl;
   @override
-  Pokemon get relativePokemon;
+  bool get stillOwned;
   @override
   @JsonKey(ignore: true)
   _$$PokemonCardImplCopyWith<_$PokemonCardImpl> get copyWith =>

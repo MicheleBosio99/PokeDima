@@ -26,6 +26,7 @@ class _RegisterState extends State<Register> {
   final emailController = TextEditingController();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +78,24 @@ class _RegisterState extends State<Register> {
                         controller: passwordController,
                         hintText: "Password",
                         obscureText: true,
-                        validator: (val) => val!.length < 8 ? 'Enter a password of at least 8 characters.' : null,
+                        validator: (val) {
+                          if (val == null || val.isEmpty) { return 'Please enter a password.'; }
+                          if (val.length < 8) { return 'Password must be at least 8 characters long.'; }
+
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 6.0),
+                      AuthTextFormField(
+                        controller: confirmPasswordController,
+                        hintText: "Confirm Password",
+                        obscureText: true,
+                        validator: (val) {
+                          if (val == null || val.isEmpty) { return 'Please enter a password.'; }
+                          if (val.length < 8) { return 'Password must be at least 8 characters long.'; }
+                          if (val != passwordController.text) { return 'Passwords do not match.'; }
+                          return null;
+                        },
                       ),
                     ],
                   ),
@@ -103,7 +121,7 @@ class _RegisterState extends State<Register> {
                 ),
 
                 loading ? const AuthLoadingBar() : AuthButton(
-                  text: "Sign In",
+                  text: "Register",
                   onTap: () async {
                     if (_formKey.currentState!.validate()) {
                       setState(() => loading = true);
@@ -119,53 +137,9 @@ class _RegisterState extends State<Register> {
                   },
                 ),
 
-                const SizedBox(height: 15.0),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          'Or continue with',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
 
-                const SizedBox(height: 20.0,),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    LogoSquareTile(
-                      imagePath: 'lib/images/logos/google_logo.png',
-                      onTap: () async { await _auth.signInWithGoogle(); },
-                    ),
-                    const SizedBox(width: 25.0),
-                    LogoSquareTile(
-                      imagePath: 'lib/images/logos/apple_logo.png',
-                      onTap: () async { await _auth.signInWithApple(); },
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 50),
+                const SizedBox(height: 80),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/domain/pokemon.dart';
+import 'package:pokedex_dima_new/domain/user.dart';
 import 'package:pokedex_dima_new/presentation/widgets/favourite_icon.dart';
-import 'package:pokedex_dima_new/presentation/widgets/pokemon_grid.dart';
+import 'package:pokedex_dima_new/presentation/pages/pokemon_grid_page.dart';
 import 'package:pokedex_dima_new/presentation/widgets/type_box.dart';
 import 'package:provider/provider.dart';
 
@@ -105,7 +106,7 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                           color: Colors.black,
                         ),
                       ),
-                      typeBoxes(pokemon.pokemonTypes, distance: 20.0),
+                      horizontalTypeBoxes(pokemon.pokemonTypes, distance: 20.0),
                     ],
                   ),
                   Text(

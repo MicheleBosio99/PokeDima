@@ -35,18 +35,20 @@ class FirebaseStorageServices {
     }
   }
 
-  Future<void> uploadProfilePicture(String username, File imageFile) async {
-    try {
-      final Reference storageRef = _storage.ref().child('$_userProfilePicturesFolder/$username/${username}_profile_pic.png');
-      await storageRef.putFile(imageFile);
-    } catch (e) {
-      print('Error uploading profile picture: $e');
-    }
-  }
-
 
 
   // HANDLE PROFILE PICTURES
+
+  Future<bool> uploadProfilePicture(String username, File imageFile) async {
+    try {
+      final Reference storageRef = _storage.ref().child('$username/$_userProfilePicturesFolder/profile_pic.png');
+      await storageRef.putFile(imageFile);
+      return true;
+    } catch (e) {
+      print('Error uploading profile picture: $e');
+      return false;
+    }
+  }
 
   Future<void> changeProfilePicture(String username, File newImageFile) async {
     try {
@@ -59,7 +61,7 @@ class FirebaseStorageServices {
 
   Future<bool> doesProfilePictureExist(String username) async {
     try {
-      final Reference storageRef = _storage.ref().child('$_userProfilePicturesFolder/$username/${username}_profile_pic.png');
+      final Reference storageRef = _storage.ref().child('$username/$_userProfilePicturesFolder/profile_pic.png');
       final FullMetadata metadata = await storageRef.getMetadata();
       return true;
     } catch (e) {
@@ -70,21 +72,38 @@ class FirebaseStorageServices {
 
   Future<String?> getProfilePictureUrl(String username) async {
     try {
-      final Reference storageRef = _storage.ref().child('$_userProfilePicturesFolder/$username/${username}_profile_pic.png');
+      final Reference storageRef = _storage.ref().child('$username/$_userProfilePicturesFolder/profile_pic.png');
       return await storageRef.getDownloadURL();
     } catch (e) {
-      print('Error getting profile picture URL: $e');
+      print('Profile image not found: $e');
       return null;
     }
   }
 
   Future<void> removeProfilePicture(String username) async {
     try {
-      final Reference storageRef = _storage.ref().child('$_userProfilePicturesFolder/$username/${username}_profile_pic.png');
+      final Reference storageRef = _storage.ref().child('$username/$_userProfilePicturesFolder/profile_pic.png');
       await storageRef.delete();
     } catch (e) {
       print('Error removing profile picture: $e');
     }
   }
 
+  Future<void> renameStorageFolder(String oldFolderName, String newFolderName) async {
+    final FirebaseStorage storage = FirebaseStorage.instance;
+
+    try {
+      ListResult listResult = await storage.ref(oldFolderName).listAll();
+
+      await Future.forEach(listResult.items, (Reference item) async {
+        String newItemPath = item.fullPath.replaceFirst(oldFolderName, newFolderName);
+        await storage.ref(newItemPath).putData((await item.getData())!);
+      });
+      await storage.ref(oldFolderName).delete();
+      return;
+
+    } catch (e) {
+      print('Error renaming folder: $e');
+    }
+  }
 }

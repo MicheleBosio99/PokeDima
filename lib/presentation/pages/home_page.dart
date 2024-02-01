@@ -4,9 +4,10 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
 import 'package:pokedex_dima_new/images/icons/poke_dima_icons.dart';
 import 'package:pokedex_dima_new/presentation/pages/scanner_page.dart';
-import 'package:pokedex_dima_new/presentation/pages/social_page.dart';
-import 'package:pokedex_dima_new/presentation/widgets/pokemon_cards_grid.dart';
-import 'package:pokedex_dima_new/presentation/widgets/pokemon_grid.dart';
+import 'package:pokedex_dima_new/presentation/pages/pokemon_cards_grid_page.dart';
+import 'package:pokedex_dima_new/presentation/pages/pokemon_grid_page.dart';
+import 'package:pokedex_dima_new/presentation/pages/user_profile_page.dart';
+import 'package:pokedex_dima_new/presentation/widgets/menu_drawer.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,12 +15,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
   late Widget bodyWidget;
   late Widget cardsCollectionPage;
   late Widget pokemonGridPage;
   late Widget scannerPage;
-  Widget socialNotificationsPage = const SocialNotifications();
+  late Widget userProfilePage;
 
   final List<Widget> _pages = [];
 
@@ -30,11 +31,12 @@ class _HomePageState extends State<HomePage> {
     cardsCollectionPage = PokemonCardsGrid(changeBodyWidget: changeBodyWidget);
     pokemonGridPage = PokemonGrid(changeBodyWidget: changeBodyWidget);
     scannerPage = Scanner(changeBodyWidget: changeBodyWidget);
+    userProfilePage = UserProfile(changeBodyWidget: changeBodyWidget);
 
     _pages.add(cardsCollectionPage);
     _pages.add(pokemonGridPage);
     _pages.add(scannerPage);
-    _pages.add(socialNotificationsPage);
+    _pages.add(userProfilePage);
 
     bodyWidget = _pages[_currentIndex];
   }
@@ -72,27 +74,34 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.menu_outlined),
-          color: Colors.white,
-          iconSize: 32,
-          onPressed: () {},
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.menu_outlined),
+              color: Colors.white,
+              iconSize: 32,
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
         ),
         leadingWidth: 60,
         actions: [
-          Padding(padding: const EdgeInsets.only(right: 0),
-          child: IconButton(
-            icon: const Icon(Icons.logout),
-            color: Colors.white,
-            iconSize: 32,
-            onPressed: () async {
-              await AuthServices().signOut();
-            },
-          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 0),
+            child: IconButton(
+              icon: const Icon(Icons.logout),
+              color: Colors.white,
+              iconSize: 32,
+              onPressed: () async {
+                await AuthServices().signOut();
+              },
+            ),
           ),
         ],
       ),
       body: bodyWidget,
+      drawer: MenuDrawer(changeBodyWidget: changeBodyWidget, ),
       bottomNavigationBar: Container(
         color: Colors.grey[850],
         child: Padding(

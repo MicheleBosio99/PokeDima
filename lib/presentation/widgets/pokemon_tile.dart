@@ -4,15 +4,15 @@ import 'package:pokedex_dima_new/presentation/pages/pokemon_info_page.dart';
 import 'package:pokedex_dima_new/presentation/widgets/type_box.dart';
 
 class PokemonTile extends StatelessWidget {
-  final Function changeBodyWidget;
-  const PokemonTile({ super.key, required this.pokemon, required this.changeBodyWidget });
 
   final Pokemon pokemon;
+  final Function changeBodyWidget;
+  const PokemonTile({ required this.pokemon, required this.changeBodyWidget });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {changeBodyWidget(PokemonInfoPage(pokemon: pokemon, changeBodyWidget: changeBodyWidget,)); },
+      onTap: () { changeBodyWidget(PokemonInfoPage(pokemon: pokemon, changeBodyWidget: changeBodyWidget,)); },
       child: Padding(
         padding: const EdgeInsets.all(6.0),
         child: Card(
@@ -57,7 +57,7 @@ class PokemonTile extends StatelessWidget {
                 const Spacer(),
                 Flexible(
                   flex: 2,
-                  child: typeBoxes(pokemon.pokemonTypes),
+                  child: horizontalTypeBoxes(pokemon.pokemonTypes),
                 )
               ],
             ),

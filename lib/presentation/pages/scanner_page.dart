@@ -1,8 +1,9 @@
 import 'dart:math';
-
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
@@ -16,6 +17,7 @@ import 'package:pokedex_dima_new/domain/user.dart';
 import 'package:pokedex_dima_new/presentation/pages/pokemon_card_info_page.dart';
 import 'package:provider/provider.dart';
 
+
 class Scanner extends StatefulWidget {
 
   final Function changeBodyWidget;
@@ -27,11 +29,11 @@ class Scanner extends StatefulWidget {
 
 class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   bool _isPermissionGranted = false;
-
   late final Future<void> _future;
   CameraController? _cameraController;
-
   final textRecognizer = TextRecognizer();
+  Map<double, double> points = {};
+
 
   @override
   void initState() {
@@ -92,7 +94,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
                                     padding: const EdgeInsets.only(bottom: 20.0),
                                     child: Center(
                                       child: ElevatedButton(
-                                        onPressed: () { _scanImage(pokemonList) ;},
+                                        onPressed: () { _scanImage(pokemonList); },
                                         style: ElevatedButton.styleFrom(
                                           fixedSize: const Size(150, 55),
                                           foregroundColor: Colors.grey[300],
@@ -134,6 +136,10 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
+
+              CustomPaint(
+                painter: PointPainter(points: points),
+              ),
             ],
           ),
         );
@@ -203,9 +209,18 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
       final pictureFile = await _cameraController!.takePicture();
       final imageFile = File(pictureFile.path);
       final inputImage = InputImage.fromFile(imageFile);
-      final recognizedText = await textRecognizer.processImage(inputImage);
 
-      // TODO: Create new card and show it inside the card_collection_info.dart
+      final points = await detectEdgesAndCropImage(inputImage);
+      if(points == null) { throw Exception("No points found."); }
+      setState(() {
+        this.points = points;
+      });
+
+
+
+      final recognizedText = await textRecognizer.processImage(inputImage);
+      final user = Provider.of<UserAuthInfo?>(context, listen: false);
+      final username = await cloudServices.getUsernameUsingEmail(user!.email);
 
       var _recognizedPokemon;
       for (int i = 0; i < pokemonList.length; i ++) {
@@ -214,38 +229,38 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
           break;
         }
       }
+      if(_recognizedPokemon == null) { throw PokemonNotFoundException("Pokemon not found"); }
 
-      if(_recognizedPokemon == null) {
-        throw PokemonNotFoundException("Pokemon not found");
-      }
-
-      // TODO: try to get more information about the card
-
-      // final tfLiteMethods = TFLiteMethods();
-      // tfLiteMethods.loadTFLiteModel();
-      // tfLiteMethods.runTFLiteOnImage(imageFile);
-
-      final user = Provider.of<UserAuthInfo?>(context, listen: false);
-      final username = await authServices.getUsernameUsingEmail(user!.email);
-      final imageName = _recognizedPokemon.name;
-      final imageUrl = await storageServices.uploadImageToUserFolder(username!, imageFile, imageName);
       final cardsProvider = Provider.of<PokemonCardsProvider?>(context, listen: false);
       if(cardsProvider == null) { throw Exception("No cards provider found."); }
 
-      final newPokemonCard = PokemonCard(
-        id: getNextId(cardsProvider.pokemonCardsList.isEmpty ? "#000" : cardsProvider.pokemonCardsList.last.id),
-        pokemonName: _recognizedPokemon.name,
-        numInBatch: getRandomBatchNumber(),
-        imageUrl: imageUrl,
-        stillOwned: true,
-      );
+      try {
+        final cardAlreadyPresent = cardsProvider.getPokemonCardByPokemonName(_recognizedPokemon.name);
+        widget.changeBodyWidget(PokemonCardInfoPage(pokemonCard: cardAlreadyPresent, changeBodyWidget: widget.changeBodyWidget,));
+        return;
+      } on StateError { ""; }
 
-      cardsProvider.addPokemonCard(newPokemonCard);
+      // TODO: try to get more information about the card
 
-      await cloudServices.addPokemonCardToFirestore(username, newPokemonCard);
+      final imageName = _recognizedPokemon.name;
+      final Future<String> imageUrlFuture = storageServices.uploadImageToUserFolder(username!, imageFile, imageName);
 
-      widget.changeBodyWidget(PokemonCardInfoPage(pokemonCard: newPokemonCard, changeBodyWidget: widget.changeBodyWidget,));
 
+      imageUrlFuture.then((imageUrl) async {
+        final newPokemonCard = PokemonCard(
+          id: getNextId(cardsProvider.pokemonCardsList.isEmpty ? "#000" : cardsProvider.pokemonCardsList.last.id),
+          pokemonName: _recognizedPokemon.name,
+          numInBatch: getRandomBatchNumber(),
+          imageUrl: imageUrl,
+          stillOwned: true,
+          rarity: _getRarity(),
+        );
+        cardsProvider.addPokemonCard(newPokemonCard);
+
+        await cloudServices.addPokemonCardToFirestore(username, newPokemonCard);
+
+        widget.changeBodyWidget(PokemonCardInfoPage(pokemonCard: newPokemonCard, changeBodyWidget: widget.changeBodyWidget,));
+      });
     } on PokemonNotFoundException {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -260,18 +275,79 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   String getRandomBatchNumber() {
     final random = Random();
     final num = random.nextInt(128);
-    return "${random.nextInt(num)}/$num";
+    return "-${random.nextInt(num).toString().padRight(2, "0")}/${num.toString().padRight(3, "0")}-";
   }
 
-  getNextId(String? id) {
+  String getNextId(String? id) {
     if(id == null) { return "#999"; }
     int originalNumber = int.parse(id.substring(1));
     int incrementedNumber = originalNumber + 1;
     return "#${incrementedNumber.toString().padLeft(3, '0')}";
   }
+
+  Future<Map<double, double>?> detectEdgesAndCropImage(InputImage inputImage) async {
+
+    final objectDetector = ObjectDetector(options:
+      ObjectDetectorOptions(
+        mode: DetectionMode.single,
+        classifyObjects: false,
+        multipleObjects: false,
+      )
+    );
+
+    final detectedObjects = await objectDetector.processImage(inputImage);
+    for(DetectedObject detectedObject in detectedObjects) {
+      final rect = detectedObject.boundingBox;
+      print('\x1B[31m$rect\x1B[0m');
+      final trackingId = detectedObject.trackingId;
+      objectDetector.close();
+
+      final
+      Map<double, double> points = {
+        rect.left / 5.65 : rect.top / 5.65,
+        rect.right / 5.65: rect.top / 5.65,
+        rect.left / 5.65: rect.bottom / 5.65,
+        rect.right / 5.65: rect.bottom / 5.65,
+      };
+
+      return points;
+    }
+  }
+
+  String _getRarity() {
+    List<String> rarities = ["Common", "Uncommon", "Rare", "Very Rare", "Legendary"];
+    return rarities[Random().nextInt(rarities.length)];
+  }
+
+  // Future<InputImage?> cropImage(InputImage inputImage, Rect rect) async {
+  //
+  // }
 }
 
 class PokemonNotFoundException implements Exception {
   String text;
   PokemonNotFoundException(this.text);
+}
+
+class PointPainter extends CustomPainter {
+
+  Map<double, double> points;
+  PointPainter({ required this.points });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = Colors.white
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 50.0;
+
+    for(var x in points.keys) {
+      canvas.drawPoints(PointMode.points, [Offset(x, points[x]!)], paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
 }

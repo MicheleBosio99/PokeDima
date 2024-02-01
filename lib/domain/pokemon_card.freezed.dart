@@ -25,6 +25,7 @@ mixin _$PokemonCard {
   String get numInBatch => throw _privateConstructorUsedError;
   String get imageUrl => throw _privateConstructorUsedError;
   bool get stillOwned => throw _privateConstructorUsedError;
+  String get rarity => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -43,7 +44,8 @@ abstract class $PokemonCardCopyWith<$Res> {
       String pokemonName,
       String numInBatch,
       String imageUrl,
-      bool stillOwned});
+      bool stillOwned,
+      String rarity});
 }
 
 /// @nodoc
@@ -64,6 +66,7 @@ class _$PokemonCardCopyWithImpl<$Res, $Val extends PokemonCard>
     Object? numInBatch = null,
     Object? imageUrl = null,
     Object? stillOwned = null,
+    Object? rarity = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -86,6 +89,10 @@ class _$PokemonCardCopyWithImpl<$Res, $Val extends PokemonCard>
           ? _value.stillOwned
           : stillOwned // ignore: cast_nullable_to_non_nullable
               as bool,
+      rarity: null == rarity
+          ? _value.rarity
+          : rarity // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -103,7 +110,8 @@ abstract class _$$PokemonCardImplCopyWith<$Res>
       String pokemonName,
       String numInBatch,
       String imageUrl,
-      bool stillOwned});
+      bool stillOwned,
+      String rarity});
 }
 
 /// @nodoc
@@ -122,6 +130,7 @@ class __$$PokemonCardImplCopyWithImpl<$Res>
     Object? numInBatch = null,
     Object? imageUrl = null,
     Object? stillOwned = null,
+    Object? rarity = null,
   }) {
     return _then(_$PokemonCardImpl(
       id: null == id
@@ -144,6 +153,10 @@ class __$$PokemonCardImplCopyWithImpl<$Res>
           ? _value.stillOwned
           : stillOwned // ignore: cast_nullable_to_non_nullable
               as bool,
+      rarity: null == rarity
+          ? _value.rarity
+          : rarity // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -156,7 +169,8 @@ class _$PokemonCardImpl implements _PokemonCard {
       required this.pokemonName,
       required this.numInBatch,
       required this.imageUrl,
-      required this.stillOwned});
+      required this.stillOwned,
+      required this.rarity});
 
   factory _$PokemonCardImpl.fromJson(Map<String, dynamic> json) =>
       _$$PokemonCardImplFromJson(json);
@@ -172,10 +186,12 @@ class _$PokemonCardImpl implements _PokemonCard {
   final String imageUrl;
   @override
   final bool stillOwned;
+  @override
+  final String rarity;
 
   @override
   String toString() {
-    return 'PokemonCard(id: $id, pokemonName: $pokemonName, numInBatch: $numInBatch, imageUrl: $imageUrl, stillOwned: $stillOwned)';
+    return 'PokemonCard(id: $id, pokemonName: $pokemonName, numInBatch: $numInBatch, imageUrl: $imageUrl, stillOwned: $stillOwned, rarity: $rarity)';
   }
 
   @override
@@ -191,13 +207,14 @@ class _$PokemonCardImpl implements _PokemonCard {
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
             (identical(other.stillOwned, stillOwned) ||
-                other.stillOwned == stillOwned));
+                other.stillOwned == stillOwned) &&
+            (identical(other.rarity, rarity) || other.rarity == rarity));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, pokemonName, numInBatch, imageUrl, stillOwned);
+      runtimeType, id, pokemonName, numInBatch, imageUrl, stillOwned, rarity);
 
   @JsonKey(ignore: true)
   @override
@@ -219,7 +236,8 @@ abstract class _PokemonCard implements PokemonCard {
       required final String pokemonName,
       required final String numInBatch,
       required final String imageUrl,
-      required final bool stillOwned}) = _$PokemonCardImpl;
+      required final bool stillOwned,
+      required final String rarity}) = _$PokemonCardImpl;
 
   factory _PokemonCard.fromJson(Map<String, dynamic> json) =
       _$PokemonCardImpl.fromJson;
@@ -234,6 +252,8 @@ abstract class _PokemonCard implements PokemonCard {
   String get imageUrl;
   @override
   bool get stillOwned;
+  @override
+  String get rarity;
   @override
   @JsonKey(ignore: true)
   _$$PokemonCardImplCopyWith<_$PokemonCardImpl> get copyWith =>

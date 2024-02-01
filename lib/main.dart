@@ -8,6 +8,7 @@ import 'package:pokedex_dima_new/domain/user.dart';
 import 'package:pokedex_dima_new/presentation/pages/home_page_wrapper.dart';
 import 'package:provider/provider.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Platform.isAndroid

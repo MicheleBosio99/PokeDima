@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
+import 'package:pokedex_dima_new/data/firebase_cloud_services/firebase_cloud_services.dart';
 
 Future<void> main() async {
 
@@ -17,8 +18,8 @@ Future<void> main() async {
 
 void getUsernameByMailFromFirebase() async {
   String email = "bosio106@gmail.com";
-  AuthServices authService = AuthServices();
-  final username = authService.getUsernameUsingEmail(email);
+  FirebaseCloudServices firebaseCloudServices = FirebaseCloudServices();
+  final username = firebaseCloudServices.getUsernameUsingEmail(email);
 
   expect(username, "berol99");
 }
@@ -43,8 +44,8 @@ void testRegisterEmailAuthentication() {
 }
 
 void testSignInWithUsernameEmailAuthentication() {
-  String password = "12345678";
   String username = "berol99";
+  String password = "12345678";
 
   AuthServices authService = AuthServices();
   var result = authService.signInWithUsernameAndPassword(username, password);
@@ -53,8 +54,8 @@ void testSignInWithUsernameEmailAuthentication() {
 
 void testRegisterWithUsernameEmailAuthentication() {
   String email = "bosio106@gmail.com";
-  String password = "12345678";
   String username = "berol99";
+  String password = "12345678";
 
   AuthServices authService = AuthServices();
   var result = authService.registerWithEmailUsernameAndPassword(email, username, password);

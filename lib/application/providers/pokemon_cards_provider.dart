@@ -25,5 +25,9 @@ class PokemonCardsProvider extends ChangeNotifier {
     return _pokemonCardsList.firstWhere((element) => element.id == cardId);
   }
 
+  PokemonCard getPokemonCardByPokemonName(String pokemonName) {
+    return _pokemonCardsList.firstWhere((card) => card.pokemonName == pokemonName);
+  }
+
   // TODO: filters
 }

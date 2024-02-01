@@ -12,6 +12,7 @@ class User with _$User {
     required String realName,
     required String profilePictureUrl,
     required String bio,
+    required String favouriteColor,
     required List<String> friendsUsernames,
     required String accountCreationDate,
 

@@ -13,6 +13,7 @@ _$PokemonCardImpl _$$PokemonCardImplFromJson(Map<String, dynamic> json) =>
       numInBatch: json['numInBatch'] as String,
       imageUrl: json['imageUrl'] as String,
       stillOwned: json['stillOwned'] as bool,
+      rarity: json['rarity'] as String,
     );
 
 Map<String, dynamic> _$$PokemonCardImplToJson(_$PokemonCardImpl instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$$PokemonCardImplToJson(_$PokemonCardImpl instance) =>
       'numInBatch': instance.numInBatch,
       'imageUrl': instance.imageUrl,
       'stillOwned': instance.stillOwned,
+      'rarity': instance.rarity,
     };

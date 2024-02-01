@@ -6,7 +6,7 @@ class PokemonType {
   final Color color;
   final Color backgroundColor;
 
-  PokemonType({required this.name, required this.color, required this.backgroundColor});
+  PokemonType({ required this.name, required this.color, required this.backgroundColor });
 
   Map<String, dynamic> toJson() {
     return {

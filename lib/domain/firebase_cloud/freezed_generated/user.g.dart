@@ -12,6 +12,7 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       realName: json['realName'] as String,
       profilePictureUrl: json['profilePictureUrl'] as String,
       bio: json['bio'] as String,
+      favouriteColor: json['favouriteColor'] as String,
       friendsUsernames: (json['friendsUsernames'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
@@ -25,6 +26,7 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
       'realName': instance.realName,
       'profilePictureUrl': instance.profilePictureUrl,
       'bio': instance.bio,
+      'favouriteColor': instance.favouriteColor,
       'friendsUsernames': instance.friendsUsernames,
       'accountCreationDate': instance.accountCreationDate,
     };

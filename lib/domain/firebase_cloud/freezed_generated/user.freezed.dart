@@ -25,6 +25,7 @@ mixin _$User {
   String get realName => throw _privateConstructorUsedError;
   String get profilePictureUrl => throw _privateConstructorUsedError;
   String get bio => throw _privateConstructorUsedError;
+  String get favouriteColor => throw _privateConstructorUsedError;
   List<String> get friendsUsernames => throw _privateConstructorUsedError;
   String get accountCreationDate => throw _privateConstructorUsedError;
 
@@ -44,6 +45,7 @@ abstract class $UserCopyWith<$Res> {
       String realName,
       String profilePictureUrl,
       String bio,
+      String favouriteColor,
       List<String> friendsUsernames,
       String accountCreationDate});
 }
@@ -66,6 +68,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? realName = null,
     Object? profilePictureUrl = null,
     Object? bio = null,
+    Object? favouriteColor = null,
     Object? friendsUsernames = null,
     Object? accountCreationDate = null,
   }) {
@@ -89,6 +92,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
       bio: null == bio
           ? _value.bio
           : bio // ignore: cast_nullable_to_non_nullable
+              as String,
+      favouriteColor: null == favouriteColor
+          ? _value.favouriteColor
+          : favouriteColor // ignore: cast_nullable_to_non_nullable
               as String,
       friendsUsernames: null == friendsUsernames
           ? _value.friendsUsernames
@@ -115,6 +122,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String realName,
       String profilePictureUrl,
       String bio,
+      String favouriteColor,
       List<String> friendsUsernames,
       String accountCreationDate});
 }
@@ -134,6 +142,7 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? realName = null,
     Object? profilePictureUrl = null,
     Object? bio = null,
+    Object? favouriteColor = null,
     Object? friendsUsernames = null,
     Object? accountCreationDate = null,
   }) {
@@ -158,6 +167,10 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.bio
           : bio // ignore: cast_nullable_to_non_nullable
               as String,
+      favouriteColor: null == favouriteColor
+          ? _value.favouriteColor
+          : favouriteColor // ignore: cast_nullable_to_non_nullable
+              as String,
       friendsUsernames: null == friendsUsernames
           ? _value._friendsUsernames
           : friendsUsernames // ignore: cast_nullable_to_non_nullable
@@ -179,6 +192,7 @@ class _$UserImpl implements _User {
       required this.realName,
       required this.profilePictureUrl,
       required this.bio,
+      required this.favouriteColor,
       required final List<String> friendsUsernames,
       required this.accountCreationDate})
       : _friendsUsernames = friendsUsernames;
@@ -196,6 +210,8 @@ class _$UserImpl implements _User {
   final String profilePictureUrl;
   @override
   final String bio;
+  @override
+  final String favouriteColor;
   final List<String> _friendsUsernames;
   @override
   List<String> get friendsUsernames {
@@ -210,7 +226,7 @@ class _$UserImpl implements _User {
 
   @override
   String toString() {
-    return 'User(username: $username, email: $email, realName: $realName, profilePictureUrl: $profilePictureUrl, bio: $bio, friendsUsernames: $friendsUsernames, accountCreationDate: $accountCreationDate)';
+    return 'User(username: $username, email: $email, realName: $realName, profilePictureUrl: $profilePictureUrl, bio: $bio, favouriteColor: $favouriteColor, friendsUsernames: $friendsUsernames, accountCreationDate: $accountCreationDate)';
   }
 
   @override
@@ -226,6 +242,8 @@ class _$UserImpl implements _User {
             (identical(other.profilePictureUrl, profilePictureUrl) ||
                 other.profilePictureUrl == profilePictureUrl) &&
             (identical(other.bio, bio) || other.bio == bio) &&
+            (identical(other.favouriteColor, favouriteColor) ||
+                other.favouriteColor == favouriteColor) &&
             const DeepCollectionEquality()
                 .equals(other._friendsUsernames, _friendsUsernames) &&
             (identical(other.accountCreationDate, accountCreationDate) ||
@@ -241,6 +259,7 @@ class _$UserImpl implements _User {
       realName,
       profilePictureUrl,
       bio,
+      favouriteColor,
       const DeepCollectionEquality().hash(_friendsUsernames),
       accountCreationDate);
 
@@ -265,6 +284,7 @@ abstract class _User implements User {
       required final String realName,
       required final String profilePictureUrl,
       required final String bio,
+      required final String favouriteColor,
       required final List<String> friendsUsernames,
       required final String accountCreationDate}) = _$UserImpl;
 
@@ -280,6 +300,8 @@ abstract class _User implements User {
   String get profilePictureUrl;
   @override
   String get bio;
+  @override
+  String get favouriteColor;
   @override
   List<String> get friendsUsernames;
   @override

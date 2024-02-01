@@ -116,7 +116,7 @@ class _SignInState extends State<SignIn> {
                     if (_formKey.currentState!.validate()) {
                       setState(() => loading = true);
                       try {
-                        await _auth.signInWithEmailAndPassword(usernameController.text, passwordController.text);
+                        await _auth.signInWithUsernameAndPassword(usernameController.text, passwordController.text);
                         error = '';
                       } catch (e) {
                         setState(() {

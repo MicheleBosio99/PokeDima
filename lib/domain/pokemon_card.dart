@@ -14,6 +14,7 @@ class PokemonCard with _$PokemonCard {
     required String numInBatch,
     required String imageUrl,
     required bool stillOwned,
+    required String rarity,
 
   }) = _PokemonCard;
 
@@ -37,6 +38,7 @@ class PokemonCard with _$PokemonCard {
       numInBatch: json['numInBatch'],
       imageUrl: json['imageUrl'],
       stillOwned: json['stillOwned'],
+      rarity: json['rarity'],
     );
   }
 
@@ -48,6 +50,7 @@ class PokemonCard with _$PokemonCard {
       numInBatch: data['numInBatch'] ?? '',
       imageUrl: data['imageUrl'] ?? '',
       stillOwned: data['stillOwned'] ?? false,
+      rarity: data['rarity'] ?? '',
     );
   }
 }

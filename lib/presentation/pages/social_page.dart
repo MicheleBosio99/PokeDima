@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SocialNotifications extends StatefulWidget {
-  const SocialNotifications({super.key});
+
+  final Function changeBodyWidget;
+  const SocialNotifications({ super.key, required this.changeBodyWidget });
 
   @override
   State<SocialNotifications> createState() => _SocialNotificationsState();
@@ -10,6 +12,6 @@ class SocialNotifications extends StatefulWidget {
 class _SocialNotificationsState extends State<SocialNotifications> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Placeholder();
   }
 }

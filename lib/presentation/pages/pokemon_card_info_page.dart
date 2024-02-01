@@ -3,7 +3,8 @@ import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.da
 import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/domain/pokemon_card.dart';
 import 'package:pokedex_dima_new/presentation/widgets/favourite_icon.dart';
-import 'package:pokedex_dima_new/presentation/widgets/pokemon_cards_grid.dart';
+import 'package:pokedex_dima_new/presentation/pages/pokemon_cards_grid_page.dart';
+import 'package:pokedex_dima_new/presentation/widgets/pokemon_tile.dart';
 import 'package:provider/provider.dart';
 
 
@@ -32,11 +33,11 @@ class _PokemonCardInfoPageState extends State<PokemonCardInfoPage> {
         if (!isPageTransitionInProgress) {
           try {
             if (details.delta.dx > 10) {
-              var nextPokemonCard = pokemonCardsProvider.getPokemonCardById(_getPrevPokemonID(pokemonCard.id));
+              var nextPokemonCard = pokemonCardsProvider.getPokemonCardById(_getPrevCardID(pokemonCard.id));
               isPageTransitionInProgress = true;
               widget.changeBodyWidget(PokemonCardInfoPage(pokemonCard: nextPokemonCard, changeBodyWidget: widget.changeBodyWidget));
             } else if (details.delta.dx < - 10) {
-              var nextPokemonCard = pokemonCardsProvider.getPokemonCardById(_getNextPokemonID(pokemonCard.id, pokemonCardsProvider.pokemonCardsList.length),);
+              var nextPokemonCard = pokemonCardsProvider.getPokemonCardById(_getNextCardID(pokemonCard.id, pokemonCardsProvider.pokemonCardsList.length),);
               isPageTransitionInProgress = true;
               widget.changeBodyWidget(PokemonCardInfoPage(pokemonCard: nextPokemonCard, changeBodyWidget: widget.changeBodyWidget));
             }
@@ -47,78 +48,151 @@ class _PokemonCardInfoPageState extends State<PokemonCardInfoPage> {
         isPageTransitionInProgress = false;
       },
       child: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [relativePokemon.pokemonTypes.first.color, Colors.white],
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: 600,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        relativePokemon.pokemonTypes.first.backgroundColor,
+                        Colors.white,
+                      ],
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 50),
+
+                      Row(
+                        children: [
+                          // const SizedBox(width: 30,),
+
+                          Expanded(child: _displayFormattedNumInBatch(pokemonCard.numInBatch)),
+
+                          Image.network(
+                            pokemonCard.imageUrl,
+                            height: 300,
+                          ),
+
+                          Expanded(child: _getRarityIcon(pokemonCard.rarity)),
+
+                          // const SizedBox(height: 50),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      SizedBox(
+                        width: 200,
+                        height: 200,
+                        child: PokemonTile(pokemon: relativePokemon, changeBodyWidget: widget.changeBodyWidget,),
+                      ),
+
+                    ],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () {
+                        widget.changeBodyWidget(PokemonCardsGrid(changeBodyWidget: widget.changeBodyWidget), index: 0);
+                      },
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0, right: 2.0),
+                    child: FavouriteIcon(pokemonName: relativePokemon.name, favouriteType: 'cards'),
+                  ),
+                ),
+              ],
             ),
-          ),
-          child: Column(
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    height: 240,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: relativePokemon.pokemonTypes[0].backgroundColor,
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(25.0),
-                        bottomRight: Radius.circular(25.0),
-                      ),
-                      image: DecorationImage(
-                        image: NetworkImage(pokemonCard.imageUrl),
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () {
-                          widget.changeBodyWidget(PokemonCardsGrid(changeBodyWidget: widget.changeBodyWidget), index: 0);
-                        },
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10.0, right: 2.0),
-                      child: FavouriteIcon(pokemonName: relativePokemon.name, favouriteType: 'cards'),
-                    ),
-                  ),
-                ],
-              ),
 
 
 
-
-            ],
-          ),
+            // TODO: delete card from collection button
+          ],
         ),
       ),
     );
   }
 
-  String _getNextPokemonID(String currPokemonID, int pokemonCardsLength) {
-    int? currentID = int.tryParse(currPokemonID.substring(1));
-    if (currentID == pokemonCardsLength - 1) {
+  String _getNextCardID(String currCardID, int pokemonCardsLength) {
+    print("Getting next card: $currCardID");
+    int? currentID = int.tryParse(currCardID.substring(1));
+    if (currentID == pokemonCardsLength - 1 || currentID == null) {
       throw Exception("LastPokemon");
-    } // Wrong now, to get from the repository length
-    return '#${((currentID ?? 0) + 1).toString().padLeft(3, '0')}';
+    }
+    return '#${(currentID + 1).toString().padLeft(3, '0')}';
   }
 
-  String _getPrevPokemonID(String currPokemonID) {
-    int? currentID = int.tryParse(currPokemonID.substring(1));
-    if (currentID == 0) {
+  String _getPrevCardID(String currCardID) {
+    print("Getting prev card: $currCardID");
+    int? currentID = int.tryParse(currCardID.substring(1));
+    if (currentID == 0 || currentID == null) {
       throw Exception("FirstPokemon");
     }
-    return '#${((currentID ?? 0) - 1).toString().padLeft(3, '0')}';
+    return '#${(currentID - 1).toString().padLeft(3, '0')}';
+  }
+
+  Widget _getRarityIcon(String rarity) {
+    Icon icon;
+    switch (rarity) {
+      case "Common":
+        icon = Icon(Icons.circle_outlined, color: Colors.grey[800], size: 32,);
+      case "Uncommon":
+        icon = Icon(Icons.circle, color: Colors.grey[800], size: 32,);
+      case "Rare":
+        icon = Icon(Icons.square_outlined, color: Colors.grey[800], size: 32,);
+      case "Very Rare":
+        icon = Icon(Icons.square, color: Colors.grey[800], size: 32,);
+      case "Legendary":
+        icon = Icon(Icons.star, color: Colors.orange[600], size: 32,);
+      default:
+        icon = Icon(Icons.circle_outlined, color: Colors.grey[800], size: 32,);
+    }
+
+    return SizedBox(
+      width: 60,
+      child: icon,
+    );
+  }
+
+  Widget _displayFormattedNumInBatch(String numInBatch) {
+    var parts = numInBatch.split('/');
+    return SizedBox(
+      width: 10,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            parts[0],
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          Divider(
+            height: 1,
+            thickness: 2,
+            color: Colors.grey[800],
+            indent: 35,
+            endIndent: 35,
+          ),
+          Text(
+            parts[1],
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
   }
 }

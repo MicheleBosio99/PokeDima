@@ -5,7 +5,8 @@ class FavouriteIcon extends StatefulWidget {
 
   final String pokemonName;
   final String favouriteType;
-  const FavouriteIcon({super.key, required this.pokemonName, required this.favouriteType});
+
+  const FavouriteIcon({ super.key, required this.pokemonName, required this.favouriteType });
 
   @override
   _FavouriteIconState createState() => _FavouriteIconState();
@@ -79,4 +80,41 @@ class Favourites {
     final serializedList = prefs.getString('favourite$favouriteType') ?? '';
     return serializedList.split(';');
   }
+
+
+  // void setUserFavouriteColor(String username, List<String> favourites, BuildContext context) {
+  //   var pokemonList = Provider.of<PokemonProvider>(context, listen: false).pokemonList;
+  //   favourites.removeAt(0);
+  //
+  //   var favouritePokemons = favourites.map((pokemonName) {
+  //     return pokemonList.firstWhere((pokemon) => pokemon.name == pokemonName);
+  //   }).toList();
+  //
+  //   FirebaseCloudServices().updateUserFavouriteColor(username, _findMostFrequentType(favouritePokemons));
+  // }
+  //
+  // Color _findMostFrequentType(List<Pokemon> pokemonList) {
+  //   Map<String, int> typeFrequency = {};
+  //
+  //   for (var pokemon in pokemonList) {
+  //     for (var type in pokemon.pokemonTypes) {
+  //       if (typeFrequency.containsKey(type.name)) {
+  //         typeFrequency[type.name] = typeFrequency[type.name]! + 1;
+  //       } else {
+  //         typeFrequency[type.name] = 1;
+  //       }
+  //     }
+  //   }
+  //
+  //   var max = 0;
+  //   var mostFrequentType = "";
+  //   for (var type in typeFrequency.keys) {
+  //     if (typeFrequency[type]! > max) {
+  //       max = typeFrequency[type]!;
+  //       mostFrequentType = type;
+  //     }
+  //   }
+  //
+  //   return PokemonType.fromJson(mostFrequentType).backgroundColor;
+  // }
 }

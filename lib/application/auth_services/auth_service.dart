@@ -1,14 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pokedex_dima_new/data/firebase_cloud_services/firebase_cloud_services.dart';
 import 'package:pokedex_dima_new/domain/user.dart';
 
 class AuthServices {
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseCloudServices _firebaseCloudServices = FirebaseCloudServices();
 
   // Create user object based on FirebaseUser
   UserAuthInfo _userFromFirebaseUser(User? user) {
-    return UserAuthInfo(uid: user!.uid, email: user.email!, lastSignInTime: user.metadata.lastSignInTime.toString(), creationTime: user.metadata.creationTime.toString());
+    return UserAuthInfo(
+        uid: user!.uid,
+        email: user.email!,
+        lastSignInTime: user.metadata.lastSignInTime.toString(),
+        creationTime: user.metadata.creationTime.toString()
+    );
   }
 
   // Detect auth changes and notify provider
@@ -31,8 +37,16 @@ class AuthServices {
     return _userFromFirebaseUser(user);
   }
 
+  // Sign in with Google - temporarily disabled since causes problem with the usernames
   Future signInWithGoogle() async {
-    // TODO
+    // final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    // final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+    // final credential = GoogleAuthProvider.credential(
+    //   accessToken: googleAuth.accessToken,
+    //   idToken: googleAuth.idToken,
+    // );
+    //
+    // final UserCredential result = await _firebaseAuth.signInWithCredential(credential);
   }
 
   Future signInWithApple() async {
@@ -53,77 +67,20 @@ class AuthServices {
   }
 
 
-  final String usersCollectionName = 'users';
-
-  Future<String?> getUsernameUsingEmail(String userEmail) async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
-          .collection(usersCollectionName)
-          .where('email', isEqualTo: userEmail)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        String username = querySnapshot.docs[0].get('username');
-        return username;
-      } else {
-        return null;
-      }
-    } catch (e) {
-      print('Error retrieving username: $e');
-      return null;
-    }
-  }
-
-  Future<String?> getEmailUsingUsername(String username) async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
-          .collection(usersCollectionName)
-          .where('username', isEqualTo: username)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        String username = querySnapshot.docs[0].get('email');
-        return username;
-      } else {
-        return null;
-      }
-    } catch (e) {
-      print('Error retrieving email: $e');
-      return null;
-    }
-  }
-
-  Future<void> addNewUserWithEmailAndUsername(String email, String username) async {
-    try {
-      CollectionReference usersCollection = FirebaseFirestore.instance.collection(usersCollectionName);
-      QuerySnapshot<Object?> existingUser = await usersCollection
-          .where('email', isEqualTo: email)
-          .limit(1)
-          .get();
-
-      if (existingUser.docs.isEmpty) {
-        await usersCollection.add({
-          'email': email,
-          'username': username,
-        });
-      } else {
-        return;
-      }
-    } catch (e) {
-      print('Error adding user: $e');
-    }
-  }
+  // USERNAME AUTHENTICATION METHODS
 
   Future signInWithUsernameAndPassword(String username, String password) async {
-    String? email = await getEmailUsingUsername(username);
-    final UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(email: email!, password: password);
+    String? email = await _firebaseCloudServices.getEmailUsingUsername(username);
+    if (email == null) { throw Exception("No user with this username found."); }
+
+    final UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
     final User? user = result.user;
     return _userFromFirebaseUser(user);
   }
 
   Future registerWithEmailUsernameAndPassword(String email, String username, String password) async {
     final UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-    await addNewUserWithEmailAndUsername(email, username);
+    await _firebaseCloudServices.addNewUserWithEmailAndUsername(email, username);
 
     final User? user = result.user;
     return _userFromFirebaseUser(user);
@@ -131,6 +88,8 @@ class AuthServices {
 
 
 
+
+  // HELPER METHODS
 
   String extractFirebaseErrorMessage(String errorMessage) {
     int closingBracketIndex = errorMessage.indexOf(']');

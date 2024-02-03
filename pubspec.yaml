@@ -57,6 +57,8 @@ dependencies:
   google_mlkit_object_detection: ^0.11.0
   image_picker: ^1.0.7
   selectable_container: ^1.0.7
+  firebase_messaging: ^14.7.14
+  flutter_launcher_icons: ^0.13.1
 #  firebase_app_check: ^0.2.1+8
 #  tflite: ^1.1.2
 
@@ -123,3 +125,9 @@ flutter:
     - family: PokeDima
       fonts:
         - asset: fonts/PokeDima.ttf
+
+
+flutter_launcher_icons:
+  android: true
+  image_path: "lib/images/logos/poke_dima_app_icon.png"
+  min_sdk_android: 21

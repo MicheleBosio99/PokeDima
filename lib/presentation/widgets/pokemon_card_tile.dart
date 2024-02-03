@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
+import 'package:pokedex_dima_new/domain/pokemon.dart';
 import 'package:pokedex_dima_new/domain/pokemon_card.dart';
 import 'package:pokedex_dima_new/presentation/pages/pokemon_card_info_page.dart';
+import 'package:pokedex_dima_new/presentation/widgets/single_card_show.dart';
 import 'package:pokedex_dima_new/presentation/widgets/type_box.dart';
 import 'package:provider/provider.dart';
 import 'package:selectable_container/selectable_container.dart';
@@ -11,7 +13,7 @@ class PokemonCardTile extends StatefulWidget {
   final PokemonCard pokemonCard;
   final Function changeBodyWidget;
   final Function? onLongPressAdd;
-  const PokemonCardTile({required this.pokemonCard, required this.changeBodyWidget, this.onLongPressAdd});
+  const PokemonCardTile({ super.key, required this.pokemonCard, required this.changeBodyWidget, this.onLongPressAdd });
 
   @override
   State<PokemonCardTile> createState() => _PokemonCardTileState();
@@ -43,78 +45,106 @@ class _PokemonCardTileState extends State<PokemonCardTile> {
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0,),
-        child: SelectableContainer(
-          selectedBorderColor: Colors.green[500],
-          selectedBackgroundColor: relativePokemon.pokemonTypes[0].backgroundColor,
-          unselectedBorderColor: Colors.grey[800],
-          unselectedBackgroundColor: relativePokemon.pokemonTypes[0].backgroundColor,
-          selectedBackgroundColorIcon: Colors.green[500],
-          unselectedBackgroundColorIcon: Colors.grey[800],
-          iconAlignment: Alignment.centerRight,
-          icon: Icons.check,
-          unselectedIcon: Icons.add,
-          marginColor: Colors.transparent,
-          elevation: 0,
-          iconSize: 32,
-          unselectedOpacity: 1,
-          selectedOpacity: 0.8,
-          selected: isSelected,
-          padding: 8.0,
-          borderSize: 3,
-          borderRadius: 20,
-          onValueChanged: (value) {
-            widget.onLongPressAdd == null ? () {} : widget.onLongPressAdd!(widget.pokemonCard.id);
-            setState(() {
-              isSelected = value;
-            });
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-            child: Row(
-              children: [
-                Image.network(
-                  widget.pokemonCard.imageUrl,
-                  height: 100,
-                  width: 80,
+        child:
+            widget.onLongPressAdd == null ?
+            Padding(
+              padding: const EdgeInsets.only(top: 15, bottom: 0, left: 15, right: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: relativePokemon.pokemonTypes[0].backgroundColor,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.grey[800]!,
+                    width: 4,
+                  ),
                 ),
-                Column(
-                  children: [
-                    Text(
-                      widget.pokemonCard.pokemonName,
-                      style: TextStyle(
-                        color: Colors.grey[800],
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      widget.pokemonCard.numInBatch,
-                      style: TextStyle(
-                        color: Colors.grey[800],
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  width: 15,
-                ),
-                verticalTypeBoxes(
-                  relativePokemon.pokemonTypes,
-                  distance: 20.0,
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                _getRarityIcon(widget.pokemonCard.rarity),
-              ],
+                child: _getCardTile(relativePokemon),
+              ),
+            )
+            :
+            SelectableContainer(
+                selectedBorderColor: Colors.green[500],
+                selectedBackgroundColor: relativePokemon.pokemonTypes[0].backgroundColor,
+                unselectedBorderColor: Colors.grey[800],
+                unselectedBackgroundColor: relativePokemon.pokemonTypes[0].backgroundColor,
+                selectedBackgroundColorIcon: Colors.green[500],
+                unselectedBackgroundColorIcon: Colors.grey[800],
+                iconAlignment: Alignment.centerRight,
+                icon: Icons.check,
+                unselectedIcon: Icons.add,
+                marginColor: Colors.transparent,
+                elevation: 0,
+                iconSize: 24,
+                unselectedOpacity: 0.75,
+                selectedOpacity: 1,
+                opacityAnimationDuration: 250,
+                selected: isSelected,
+                padding: 0.0,
+                borderSize: 4,
+                borderRadius: 20,
+                onValueChanged: (value) {
+                  widget.onLongPressAdd == null ? () {} : widget.onLongPressAdd!(widget.pokemonCard.id);
+                  setState(() {
+                    isSelected = value;
+                  });
+                },
+                child: _getCardTile(relativePokemon),
             ),
-          )
-        ),
+
+      ),
+    );
+  }
+
+  Widget _getCardTile(Pokemon relativePokemon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const SizedBox(width: 0,),
+
+          SingleCardShow(card: widget.pokemonCard, changeBodyWidget: widget.changeBodyWidget, width: 60, height: 90,),
+
+          // const SizedBox(width: 5,),
+
+          Column(
+            children: [
+              Text(
+                widget.pokemonCard.pokemonName,
+                style: TextStyle(
+                  color: Colors.grey[800],
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              // const SizedBox(height: 5,),
+
+              Text(
+                "-${widget.pokemonCard.numInBatch}-",
+                style: TextStyle(
+                  color: Colors.grey[800],
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+
+          // const SizedBox(width: 20,),
+
+          verticalTypeBoxes(
+            relativePokemon.pokemonTypes,
+            distance: 20.0,
+          ),
+
+          // const SizedBox(width: 20,),
+
+          Padding(
+            padding: const EdgeInsets.only(right: 10,),
+            child: _getRarityIcon(widget.pokemonCard.rarity),
+          ),
+        ],
       ),
     );
   }

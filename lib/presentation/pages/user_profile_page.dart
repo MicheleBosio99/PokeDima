@@ -7,6 +7,8 @@ import 'package:pokedex_dima_new/domain/user.dart';
 import 'package:pokedex_dima_new/images/icons/poke_dima_icons.dart';
 import 'package:pokedex_dima_new/presentation/pages/friend_list_page.dart';
 import 'package:pokedex_dima_new/presentation/pages/modify_profile_page.dart';
+import 'package:pokedex_dima_new/presentation/pages/trades_list_page.dart';
+import 'package:pokedex_dima_new/presentation/pages/visualize_profile_image.dart';
 import 'package:pokedex_dima_new/presentation/widgets/auth_loading_bar.dart';
 import 'package:pokedex_dima_new/presentation/widgets/favourite_card.dart';
 import 'package:pokedex_dima_new/presentation/widgets/favourite_icon.dart';
@@ -15,7 +17,7 @@ import 'package:provider/provider.dart';
 class UserProfile extends StatefulWidget {
 
   final Function changeBodyWidget;
-  const UserProfile({ required this.changeBodyWidget });
+  const UserProfile({required this.changeBodyWidget});
 
   @override
   State<UserProfile> createState() => _UserProfileState();
@@ -76,10 +78,25 @@ class _UserProfileState extends State<UserProfile> {
                                         width: 3,
                                       ),
                                     ),
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.transparent,
-                                      backgroundImage: NetworkImage(user.profilePictureUrl),
-                                      radius: 75,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.transparent,
+                                        elevation: 0,
+                                        shadowColor: Colors.transparent,
+                                        padding: const EdgeInsets.all(0),
+                                      ),
+                                      onLongPress: () {
+                                        widget.changeBodyWidget(
+                                          VisualizeProfileImage(imageUrl: user.profilePictureUrl, changeBodyWidget: widget.changeBodyWidget),
+                                          index: -1,
+                                        );
+                                      },
+                                      onPressed: () {},
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.transparent,
+                                        backgroundImage: NetworkImage(user.profilePictureUrl),
+                                        radius: 75,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(
@@ -97,9 +114,9 @@ class _UserProfileState extends State<UserProfile> {
                               ),
                             ),
                           ),
-
-                          const SizedBox(width: 40,),
-
+                          const SizedBox(
+                            width: 40,
+                          ),
                           const Column(
                             children: [],
                           ),
@@ -134,17 +151,25 @@ class _UserProfileState extends State<UserProfile> {
                   endIndent: 30,
                 ),
 
-                const SizedBox(height: 30,),
+                const SizedBox(
+                  height: 30,
+                ),
 
-                Text(
-                  user.bio,
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.grey[800],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+                  child: Text(
+                    user.bio,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey[800],
+                    ),
                   ),
                 ),
 
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
 
                 IntrinsicHeight(
                   child: Row(
@@ -257,9 +282,9 @@ class _UserProfileState extends State<UserProfile> {
                                     ),
                                   ],
                                 ),
-
-                                const SizedBox(height: 8,),
-
+                                const SizedBox(
+                                  height: 8,
+                                ),
                                 Row(
                                   children: [
                                     Icon(
@@ -284,54 +309,83 @@ class _UserProfileState extends State<UserProfile> {
                           ),
                         ),
                       ),
-                  
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          bottom: 10,
-                          right: 20,
-                          left: 20,
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            color: backgroundColor,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Colors.grey[700]!,
-                              width: 2,
+                      Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 10,
+                              bottom: 5,
+                              right: 20,
+                              left: 20,
                             ),
-                          ),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: IconButton(
-                              onPressed: () {
-                                widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1);
-                              },
-                              icon: Icon(
-                                Icons.people_alt_rounded,
-                                color: Colors.grey[800],
-                                size: 32,
+                            child: Container(
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                color: backgroundColor,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.grey[700]!,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: IconButton(
+                                  onPressed: () {
+                                    widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1);
+                                  },
+                                  icon: Icon(
+                                    Icons.people_alt_rounded,
+                                    color: Colors.grey[800],
+                                    size: 32,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 5,
+                              bottom: 10,
+                              right: 20,
+                              left: 20,
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                color: backgroundColor,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.grey[700]!,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: IconButton(
+                                  onPressed: () {
+                                    widget.changeBodyWidget(TradesListPage(user: user, changeBodyWidget: widget.changeBodyWidget,), index: -1,);
+                                  },
+                                  icon: Icon(
+                                    Icons.compare_arrows_rounded,
+                                    color: Colors.grey[800],
+                                    size: 32,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
 
-
-
-
-
                 // TODO - ADD TRADES
 
-
-
-
-            
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
 
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
@@ -346,7 +400,9 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                     child: Column(
                       children: [
-                        const SizedBox(height: 10,),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         const Text(
                           "Favourites",
                           style: TextStyle(
@@ -354,9 +410,9 @@ class _UserProfileState extends State<UserProfile> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-
-                        const SizedBox(height: 20,),
-
+                        const SizedBox(
+                          height: 20,
+                        ),
                         Divider(
                           color: Colors.grey[500],
                           thickness: 3,
@@ -364,7 +420,6 @@ class _UserProfileState extends State<UserProfile> {
                           indent: 10,
                           endIndent: 10,
                         ),
-
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           child: Container(
@@ -379,14 +434,12 @@ class _UserProfileState extends State<UserProfile> {
                                     children: getFavouriteCards(pokemonFavourites)!,
                                   ),
                                 ),
-
                                 VerticalDivider(
                                   color: Colors.grey[500],
                                   thickness: 3,
                                   width: 0,
                                   endIndent: 5,
                                 ),
-
                                 Column(
                                   children: getFavouriteCards(cardFavourites)!,
                                 ),
@@ -398,7 +451,6 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                   ),
                 ),
-
               ],
             ),
           );
@@ -410,10 +462,12 @@ class _UserProfileState extends State<UserProfile> {
   List<Widget>? getFavouriteCards(List<String> favouritesFull) {
     List<Widget> favouriteCards = [];
 
-    if(favouritesFull.isEmpty) { return null; }
+    if (favouritesFull.isEmpty) {
+      return null;
+    }
     final favourites = favouritesFull.sublist(1);
 
-    if(favourites.isEmpty) {
+    if (favourites.isEmpty) {
       favouriteCards.add(
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
@@ -441,12 +495,9 @@ class _UserProfileState extends State<UserProfile> {
         ),
       );
       return favouriteCards;
-    }
-    else {
+    } else {
       for (var pokemonName in favourites) {
-        favouriteCards.add(
-          FavouriteCard(pokemonName: pokemonName)
-        );
+        favouriteCards.add(FavouriteCard(pokemonName: pokemonName));
       }
       return favouriteCards;
     }
@@ -486,8 +537,6 @@ class _UserProfileState extends State<UserProfile> {
   //   return maxType.backgroundColor;
   // }
 }
-
-
 
 // Expanded(
 // child: ListView(
@@ -571,12 +620,6 @@ class _UserProfileState extends State<UserProfile> {
 // ],
 // ),
 // ),
-
-
-
-
-
-
 
 //
 // if(pokemonFavourites.length == 1) {

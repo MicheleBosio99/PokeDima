@@ -4,7 +4,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
 import 'package:pokedex_dima_new/images/icons/poke_dima_icons.dart';
 import 'package:pokedex_dima_new/presentation/pages/scanner_page.dart';
-import 'package:pokedex_dima_new/presentation/pages/pokemon_cards_grid_page.dart';
+import 'package:pokedex_dima_new/presentation/pages/pokemon_cards_list_page.dart';
 import 'package:pokedex_dima_new/presentation/pages/pokemon_grid_page.dart';
 import 'package:pokedex_dima_new/presentation/pages/user_profile_page.dart';
 import 'package:pokedex_dima_new/presentation/widgets/menu_drawer.dart';
@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    cardsCollectionPage = PokemonCardsGrid(changeBodyWidget: changeBodyWidget);
+    cardsCollectionPage = PokemonCardsList(changeBodyWidget: changeBodyWidget);
     pokemonGridPage = PokemonGrid(changeBodyWidget: changeBodyWidget);
     scannerPage = Scanner(changeBodyWidget: changeBodyWidget);
     userProfilePage = UserProfile(changeBodyWidget: changeBodyWidget);

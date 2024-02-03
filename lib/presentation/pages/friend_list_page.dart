@@ -81,17 +81,35 @@ class _FriendListState extends State<FriendList> {
                     endIndent: 50,
                   ),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0,),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: _getListOfFriendsTile(friends, widget.changeBodyWidget),
+                  if(friends.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0,),
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "You have no friends yet. Go to the search page and find some!",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[400],
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
+
+                  if(friends.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0,),
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: _getListOfFriendsTile(friends, widget.changeBodyWidget),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

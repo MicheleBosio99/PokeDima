@@ -4,6 +4,7 @@ import 'package:pokedex_dima_new/domain/firebase_cloud/user.dart';
 import 'package:pokedex_dima_new/images/icons/poke_dima_icons.dart';
 import 'package:pokedex_dima_new/presentation/pages/friend_card_collection.dart';
 import 'package:pokedex_dima_new/presentation/pages/friend_list_page.dart';
+import 'package:pokedex_dima_new/presentation/widgets/auth_loading_bar.dart';
 
 class FriendProfile extends StatefulWidget {
 
@@ -18,12 +19,25 @@ class FriendProfile extends StatefulWidget {
 
 class _FriendProfileState extends State<FriendProfile> {
 
+  Future<bool> _isAlreadyFriend() async {
+   return await FirebaseCloudServices().isAlreadyFriend(widget.username, widget.friend.username);
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = widget.friend;
     final backgroundColor = Color(int.parse(user.favouriteColor));
 
-    return SingleChildScrollView(
+    return FutureBuilder(
+      future: _isAlreadyFriend(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Align(alignment: Alignment.center, child: AuthLoadingBar());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          var isAlreadyFriend = snapshot.data!;
+          return SingleChildScrollView(
             child: Column(
               children: [
                 Stack(
@@ -96,29 +110,72 @@ class _FriendProfileState extends State<FriendProfile> {
                       ),
                     ),
 
-                    Positioned(
-                      top: 5,
-                      right: 5,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.remove_circle_outline_sharp,
-                          color: Colors.grey[800],
-                          size: 32,
+                    if(isAlreadyFriend)
+                      Positioned(
+                        top: 5,
+                        right: 5,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.remove_circle_outline_sharp,
+                            color: Colors.grey[800],
+                            size: 32,
+                          ),
+                          onPressed: () {
+                            FirebaseCloudServices().removeFriendOfUser(widget.username, widget.friend.username);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.grey[850],
+                                content:
+                                const Center(
+                                  child: Text(
+                                    "Friend has been removed",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                duration: const Duration(seconds: 2,),
+                              ),
+                            );
+                            FirebaseCloudServices().removeAllTradesWithUser(widget.username, widget.friend.username);
+                            widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1);
+                          },
                         ),
-                        onPressed: () {
-                          FirebaseCloudServices().removeFriendOfUser(widget.username, widget.friend.username);
-                          widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content:
-                              const Center(child: Text("Friend has been removed.")),
-                              duration: const Duration(seconds: 2,),
-                              backgroundColor: backgroundColor,
-                            ),
-                          );
-                        },
                       ),
-                    ),
+
+                    if(!isAlreadyFriend)
+                      Positioned(
+                        top: 5,
+                        right: 5,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.add_circle_outline_sharp,
+                            color: Colors.grey[800],
+                            size: 32,
+                          ),
+                          onPressed: () async {
+                            await FirebaseCloudServices().addFriendWithUsername(widget.username, widget.friend.username);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.grey[850],
+                                content:
+                                const Center(
+                                  child: Text(
+                                    "Friend has been added",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                duration: const Duration(seconds: 2,),
+                              ),
+                            );
+                            widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1);
+                          },
+                        ),
+                      ),
 
                   ],
                 ),
@@ -285,12 +342,15 @@ class _FriendProfileState extends State<FriendProfile> {
                       ),
                     ),
                     onPressed: () {
-                      widget.changeBodyWidget(FriendCardCollection(changeBodyWidget: widget.changeBodyWidget, friend: user,), index: -1);
+                      widget.changeBodyWidget(FriendCardsCollection(username: widget.username, friend: user, changeBodyWidget: widget.changeBodyWidget,), index: -1);
                     },
                   ),
                 ),
               ],
             ),
           );
+        }
+      },
+    );
   }
 }

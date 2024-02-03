@@ -3,7 +3,7 @@ import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.da
 import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/domain/pokemon_card.dart';
 import 'package:pokedex_dima_new/presentation/widgets/favourite_icon.dart';
-import 'package:pokedex_dima_new/presentation/pages/pokemon_cards_grid_page.dart';
+import 'package:pokedex_dima_new/presentation/pages/pokemon_cards_list_page.dart';
 import 'package:pokedex_dima_new/presentation/widgets/pokemon_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -86,7 +86,7 @@ class _PokemonCardInfoPageState extends State<PokemonCardInfoPage> {
                         ],
                       ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 40),
 
                       SizedBox(
                         width: 200,
@@ -104,7 +104,7 @@ class _PokemonCardInfoPageState extends State<PokemonCardInfoPage> {
                     child: IconButton(
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () {
-                        widget.changeBodyWidget(PokemonCardsGrid(changeBodyWidget: widget.changeBodyWidget), index: 0);
+                        widget.changeBodyWidget(PokemonCardsList(changeBodyWidget: widget.changeBodyWidget), index: 0);
                       },
                     ),
                   ),

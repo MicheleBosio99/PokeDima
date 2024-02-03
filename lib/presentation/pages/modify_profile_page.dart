@@ -164,10 +164,11 @@ class _ModifyProfileState extends State<ModifyProfile> {
                       duration: const Duration(seconds: 2),
                       content: Center(
                         child: Text(
-                          "User info successfully updated. Loading...",
+                          "User info successfully updated",
                           style: TextStyle(
-                            color: Colors.grey[300],
+                            color: Colors.grey[200],
                             fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),

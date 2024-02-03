@@ -1,26 +1,34 @@
 import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:pokedex_dima_new/application/deserializers/pokemon_cards_deserializer.dart';
+import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.dart';
+import 'package:pokedex_dima_new/domain/firebase_cloud/trade.dart';
 import 'package:pokedex_dima_new/domain/firebase_cloud/user.dart';
 import 'package:pokedex_dima_new/domain/pokemon_card.dart';
+import 'package:provider/provider.dart';
 
 class FirebaseCloudServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String _cardsCollection = 'cards_collection';
-  final String _cardsField = 'cards';
+  final String _cardsCollectionName = 'cards_collection';
   final String _usersCollectionName = 'users';
+  final String _tradesCollectionName = 'trades';
+
+  final String _cardsField = 'cards';
   final String _friendsUsernames = 'friendsUsernames';
 
+
+
   // CARDS COLLECTION METHODS
-  Future<void> addPokemonCardToFirestore(String username, PokemonCard pokemonCard) async {
+  Future<void> addPokemonCardToUser(String username, PokemonCard pokemonCard) async {
     try {
-      var userDoc = await _firestore.collection(_cardsCollection).doc(username).get();
+      var userDoc = await _firestore.collection(_cardsCollectionName).doc(username).get();
       if (userDoc.exists) {
-        await _firestore.collection(_cardsCollection).doc(username).update({
+        await _firestore.collection(_cardsCollectionName).doc(username).update({
           _cardsField: FieldValue.arrayUnion([pokemonCard.toJson()]),
         });
       } else {
-        await _firestore.collection(_cardsCollection).doc(username).set({
+        await _firestore.collection(_cardsCollectionName).doc(username).set({
           _cardsField: [pokemonCard.toJson()],
         });
       }
@@ -31,7 +39,7 @@ class FirebaseCloudServices {
 
   Future<List<PokemonCard>> getPokemonCardsByUsername(String username) async {
     try {
-      var userDoc = await _firestore.collection(_cardsCollection).doc(username).get();
+      var userDoc = await _firestore.collection(_cardsCollectionName).doc(username).get();
 
       if (userDoc.exists) {
         var cards = userDoc.data()?[_cardsField] as List<dynamic>? ?? [];
@@ -207,7 +215,7 @@ class FirebaseCloudServices {
     }
   }
 
-  void addFriendWithUsername(String userUsername, String friendUsername) async {
+  Future<void> addFriendWithUsername(String userUsername, String friendUsername) async {
     // TODO Send Notification to new friend
 
 
@@ -263,7 +271,7 @@ class FirebaseCloudServices {
   }
 
   Future<void> modifyCardsDocumentName(String oldDocumentName, String newDocumentName) async {
-    final CollectionReference collection = FirebaseFirestore.instance.collection(_cardsCollection);
+    final CollectionReference collection = FirebaseFirestore.instance.collection(_cardsCollectionName);
     try {
       DocumentSnapshot oldDocumentSnapshot = await collection.doc(oldDocumentName).get();
       var data = oldDocumentSnapshot.data();
@@ -297,6 +305,227 @@ class FirebaseCloudServices {
     } catch (e) {
       print('Error retrieving user: $e');
       return null;
+    }
+  }
+
+  Future<List<Trade>> getAllUserTrades(String username) {
+    return Future.wait([getTradesSentByUsername(username), getTradesProposedToUsername(username)])
+        .then((List<List<Trade>> trades) {
+      return trades[0] + trades[1];
+    });
+  }
+
+  Future<List<Trade>> getTradesSentByUsername(String username) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection('trades')
+          .where('senderUsername', isEqualTo: username)
+          .get();
+
+      List<Trade> trades = [];
+      for (var trade in querySnapshot.docs) {
+        trades.add(Trade.fromJson(trade.data()));
+      }
+      return trades;
+    } catch (e) {
+      print('Error retrieving trades: $e');
+      return [];
+    }
+  }
+
+  Future<List<Trade>> getTradesProposedToUsername(String username) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection(_tradesCollectionName)
+          .where('receiverUsername', isEqualTo: username)
+          .get();
+
+      List<Trade> trades = [];
+      for (var trade in querySnapshot.docs) {
+        trades.add(Trade.fromJson(trade.data()));
+      }
+      return trades;
+    } catch (e) {
+      print('Error retrieving trades: $e');
+      return [];
+    }
+  }
+
+  void uploadNewTrade(Trade trade, List<PokemonCard> userPokemonCards, List<PokemonCard> friendPokemonCards) async {
+    try {
+      await _firestore.collection(_tradesCollectionName).add(trade.toJson());
+      addPokemonCardsToTrade(trade.tradeId, userPokemonCards, friendPokemonCards);
+    } catch (e) {
+      print('Error uploading trade: $e');
+    }
+  }
+
+  void addPokemonCardsToTrade(String tradeId, List<PokemonCard> userPokemonCards, List<PokemonCard> friendPokemonCards) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection(_tradesCollectionName)
+          .where('tradeId', isEqualTo: tradeId)
+          .get();
+
+      querySnapshot.docs.first.reference.update({
+        'pokemonCardsOffered': userPokemonCards.map((card) => card.toJson()).toList(),
+        'pokemonCardsRequested': friendPokemonCards.map((card) => card.toJson()).toList(),
+      });
+    } catch (e) {
+      print('Error adding Pokemon cards to trade: $e');
+    }
+  }
+
+  Future<bool> doesTradeBetweenUserAndFriendAlreadyExist(String userUsername, String friendUsername) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection(_tradesCollectionName)
+          .where('senderUsername', isEqualTo: userUsername)
+          .where('receiverUsername', isEqualTo: friendUsername)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) { return true; }
+
+      querySnapshot = await _firestore
+          .collection(_tradesCollectionName)
+          .where('senderUsername', isEqualTo: friendUsername)
+          .where('receiverUsername', isEqualTo: userUsername)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) { return true; }
+
+      return false;
+    }
+    catch (e) {
+      print('Error findings trades: $e');
+      return false;
+    }
+  }
+
+  Future<List<Trade>> getAllTradesOfUser(String username) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection(_tradesCollectionName)
+          .where('senderUsername', isEqualTo: username)
+          .get();
+      List<Trade> trades = [];
+      for (var trade in querySnapshot.docs) {trades.add(Trade.fromJson(trade.data()));}
+
+      querySnapshot = await _firestore
+          .collection(_tradesCollectionName)
+          .where('receiverUsername', isEqualTo: username)
+          .get();
+      for (var trade in querySnapshot.docs) {trades.add(Trade.fromJson(trade.data()));}
+
+      trades.sort((a, b) => DateTime.parse(b.timestamp).compareTo(DateTime.parse(a.timestamp)));
+      return trades;
+    } catch (e) {
+      print('Error retrieving trades: $e');
+      return [];
+    }
+  }
+
+  Future<void> updateTradeStatus(Trade trade, String newStatus, { String email = "", BuildContext? context }) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection(_tradesCollectionName)
+          .where('tradeId', isEqualTo: trade.tradeId)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot<Map<String, dynamic>> tradeDocument = querySnapshot.docs.first;
+        await _firestore
+            .collection(_tradesCollectionName)
+            .doc(tradeDocument.id)
+            .update({'status': newStatus});
+
+        if(newStatus == "accepted") {
+          _updateTradeStatusInCards(trade);
+          PokemonCardsDeserializer.deserializeAndSetProviderData(email, Provider.of<PokemonCardsProvider>(context!, listen: false));
+        }
+      }
+    } catch (e) {
+      print('Error updating trade status: $e');
+    }
+  }
+
+  void _updateTradeStatusInCards(Trade trade) {
+    _removeCardsFromUser(trade.senderUsername, trade.pokemonCardsOffered);
+    _removeCardsFromUser(trade.receiverUsername, trade.pokemonCardsRequested);
+
+    _addCardsToUser(trade.senderUsername, trade.pokemonCardsRequested);
+    _addCardsToUser(trade.receiverUsername, trade.pokemonCardsOffered);
+  }
+
+  void _addCardsToUser(String username, List<PokemonCard> cards) async {
+    try {
+      CollectionReference collectionReference = _firestore.collection(_cardsCollectionName);
+      DocumentSnapshot documentSnapshot = await collectionReference.doc(username).get();
+
+      if(documentSnapshot.exists) {
+        await collectionReference.doc(username).update({
+          _cardsField: FieldValue.arrayUnion(cards.map((card) => card.toJson()).toList()),
+        });
+      } else {
+        await collectionReference.doc(username).set({
+          _cardsField: cards.map((card) => card.toJson()).toList(),
+        });
+      }
+
+    } catch (e) {
+      print('Error adding cards to user: $e');
+    }
+  }
+
+  void _removeCardsFromUser(String username, List<PokemonCard> cards) async {
+    try {
+      CollectionReference collectionReference = _firestore.collection(_cardsCollectionName);
+      DocumentSnapshot documentSnapshot = await collectionReference.doc(username).get();
+
+      if(documentSnapshot.exists) {
+        await collectionReference.doc(username).update({
+          _cardsField: FieldValue.arrayRemove(cards.map((card) => card.toJson()).toList()),
+        });
+      } else {
+        await collectionReference.doc(username).set({
+          _cardsField: cards.map((card) => card.toJson()).toList(),
+        });
+      }
+
+    } catch (e) {
+      print('Error adding cards to user: $e');
+    }
+  }
+
+  Future<void> removeAllTradesWithUser(String userUsername, String friendUsername) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection(_tradesCollectionName)
+          .where('receiverUsername', isEqualTo: userUsername)
+          .where('senderUsername', isEqualTo: friendUsername)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot<Map<String, dynamic>> tradeDocument = querySnapshot.docs.first;
+        await _firestore
+            .collection(_tradesCollectionName)
+            .doc(tradeDocument.id)
+            .delete();
+      }
+
+      querySnapshot = await _firestore
+          .collection(_tradesCollectionName)
+          .where('senderUsername', isEqualTo: userUsername)
+          .where('receiverUsername', isEqualTo: friendUsername)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot<Map<String, dynamic>> tradeDocument = querySnapshot.docs.first;
+        await _firestore
+            .collection(_tradesCollectionName)
+            .doc(tradeDocument.id)
+            .delete();
+      }
+    } catch (e) {
+      print('Error deleting trade: $e');
     }
   }
 }

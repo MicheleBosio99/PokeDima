@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
+import 'package:pokedex_dima_new/data/firebase_messages_services/firebase_messages_services.dart';
 import 'package:pokedex_dima_new/domain/user.dart';
 import 'package:pokedex_dima_new/presentation/pages/home_page_wrapper.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ void main() async {
           projectId: "pokedexdima-new",
         ))
       : await Firebase.initializeApp();
+  await FirebaseMessagesServices().initNotifications();
   runApp(MyApp());
 }
 
@@ -40,6 +42,8 @@ class MyApp extends StatelessWidget {
       child: Builder(
         builder: (context) {
           return MaterialApp(
+            title: 'PokeDima',
+            debugShowCheckedModeBanner: false,
             home: HomePageWrapper(),
           );
         },

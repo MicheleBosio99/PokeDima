@@ -138,10 +138,11 @@ class _SearchFriendState extends State<SearchFriend> {
             addFriendButton: isAlreadyFriend ? const SizedBox.shrink() :
             IconButton(
               onPressed: () async {
-                FirebaseCloudServices().addFriendWithUsername(userUsername, friendUsername);
-                setState(() {
-                  friendWidget = const SizedBox.shrink();
-                });
+                await FirebaseCloudServices().addFriendWithUsername(userUsername, friendUsername);
+                // setState(() {
+                //   friendWidget = const SizedBox.shrink();
+                // });
+                widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1);
               },
               icon: const Icon(Icons.add_circle_outline_sharp),
               iconSize: 32,

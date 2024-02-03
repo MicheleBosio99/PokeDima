@@ -137,9 +137,9 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
                   ),
                 ),
 
-              CustomPaint(
-                painter: PointPainter(points: points),
-              ),
+              // CustomPaint(
+              //   painter: PointPainter(points: points),
+              // ),
             ],
           ),
         );
@@ -248,7 +248,8 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
 
       imageUrlFuture.then((imageUrl) async {
         final newPokemonCard = PokemonCard(
-          id: getNextId(cardsProvider.pokemonCardsList.isEmpty ? "#000" : cardsProvider.pokemonCardsList.last.id),
+          // id: _getNextId(cardsProvider.pokemonCardsList.isEmpty ? "#000" : cardsProvider.pokemonCardsList.last.id),
+          id: _getNextId(_recognizedPokemon.name),
           pokemonName: _recognizedPokemon.name,
           numInBatch: getRandomBatchNumber(),
           imageUrl: imageUrl,
@@ -257,7 +258,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
         );
         cardsProvider.addPokemonCard(newPokemonCard);
 
-        await cloudServices.addPokemonCardToFirestore(username, newPokemonCard);
+        await cloudServices.addPokemonCardToUser(username, newPokemonCard);
 
         widget.changeBodyWidget(PokemonCardInfoPage(pokemonCard: newPokemonCard, changeBodyWidget: widget.changeBodyWidget,));
       });
@@ -275,14 +276,15 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   String getRandomBatchNumber() {
     final random = Random();
     final num = random.nextInt(128);
-    return "-${random.nextInt(num).toString().padRight(2, "0")}/${num.toString().padRight(3, "0")}-";
+    return "${random.nextInt(num).toString().padRight(2, "0")}/${num.toString().padLeft(3, "0")}";
   }
 
-  String getNextId(String? id) {
-    if(id == null) { return "#999"; }
-    int originalNumber = int.parse(id.substring(1));
-    int incrementedNumber = originalNumber + 1;
-    return "#${incrementedNumber.toString().padLeft(3, '0')}";
+  String _getNextId(String? pokemonName) {
+    // if(id == null) { return "#999"; }
+    // int originalNumber = int.parse(id.substring(1));
+    // int incrementedNumber = originalNumber + 1;
+    // return "#${incrementedNumber.toString().padLeft(3, '0')}";
+    return "#${pokemonName!.substring(0, 3).toUpperCase()}${Random().nextInt(999).toString().padLeft(3, '0')}";
   }
 
   Future<Map<double, double>?> detectEdgesAndCropImage(InputImage inputImage) async {

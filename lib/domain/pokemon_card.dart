@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:pokedex_dima_new/domain/pokemon.dart';
-
 part 'pokemon_card.freezed.dart';
 part 'pokemon_card.g.dart';
 
@@ -28,10 +26,11 @@ class PokemonCard with _$PokemonCard {
       'numInBatch': numInBatch,
       'imageUrl': imageUrl,
       'stillOwned': stillOwned,
+      'rarity': rarity,
     };
   }
 
-  factory PokemonCard.fromFirestore(Map<String, dynamic> json, Pokemon relativePokemon) {
+  factory PokemonCard.fromFirestore(Map<String, dynamic> json) {
     return PokemonCard(
       id: json['cardId'],
       pokemonName: json['pokemonName'],
@@ -42,7 +41,7 @@ class PokemonCard with _$PokemonCard {
     );
   }
 
-  factory PokemonCard.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot, Pokemon relativePokemon) {
+  factory PokemonCard.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     Map<String, dynamic> data = snapshot.data() ?? {};
     return PokemonCard(
       id: data['cardId'] ?? '',

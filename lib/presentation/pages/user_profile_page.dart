@@ -12,6 +12,7 @@ import 'package:pokedex_dima_new/presentation/pages/visualize_profile_image.dart
 import 'package:pokedex_dima_new/presentation/widgets/auth_loading_bar.dart';
 import 'package:pokedex_dima_new/presentation/widgets/favourite_card.dart';
 import 'package:pokedex_dima_new/presentation/widgets/favourite_icon.dart';
+import 'package:pokedex_dima_new/presentation/widgets/single_card_show.dart';
 import 'package:provider/provider.dart';
 
 class UserProfile extends StatefulWidget {
@@ -367,7 +368,7 @@ class _UserProfileState extends State<UserProfile> {
                                     widget.changeBodyWidget(TradesListPage(user: user, changeBodyWidget: widget.changeBodyWidget,), index: -1,);
                                   },
                                   icon: Icon(
-                                    Icons.compare_arrows_rounded,
+                                    PokeDima.exchange_round,
                                     color: Colors.grey[800],
                                     size: 32,
                                   ),
@@ -380,8 +381,6 @@ class _UserProfileState extends State<UserProfile> {
                     ],
                   ),
                 ),
-
-                // TODO - ADD TRADES
 
                 const SizedBox(
                   height: 20,
@@ -422,29 +421,25 @@ class _UserProfileState extends State<UserProfile> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          child: Container(
-                            // height: maxLength > 2 ? (maxLength * 90) : 120,
-
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 15),
-                                  child: Column(
-                                    children: getFavouriteCards(pokemonFavourites)!,
-                                  ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 15),
+                                child: Column(
+                                  children: getFavouritePokemon(pokemonFavourites)!,
                                 ),
-                                VerticalDivider(
-                                  color: Colors.grey[500],
-                                  thickness: 3,
-                                  width: 0,
-                                  endIndent: 5,
-                                ),
-                                Column(
-                                  children: getFavouriteCards(cardFavourites)!,
-                                ),
-                              ],
-                            ),
+                              ),
+                              VerticalDivider(
+                                color: Colors.grey[500],
+                                thickness: 3,
+                                width: 0,
+                                endIndent: 5,
+                              ),
+                              Column(
+                                children: getFavouriteCards(cardFavourites)!,
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -497,7 +492,58 @@ class _UserProfileState extends State<UserProfile> {
       return favouriteCards;
     } else {
       for (var pokemonName in favourites) {
-        favouriteCards.add(FavouriteCard(pokemonName: pokemonName));
+        favouriteCards.add(
+            SingleCardShow(
+              card: Provider.of<PokemonCardsProvider>(context, listen: false).getPokemonCardByPokemonName(pokemonName),
+              changeBodyWidget: widget.changeBodyWidget,
+              width: 118,
+              height: 152,
+            )
+        );
+      }
+      return favouriteCards;
+    }
+  }
+
+  List<Widget>? getFavouritePokemon(List<String> favouritesFull) {
+    List<Widget> favouriteCards = [];
+
+    if (favouritesFull.isEmpty) {
+      return null;
+    }
+    final favourites = favouritesFull.sublist(1);
+
+    if (favourites.isEmpty) {
+      favouriteCards.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.grey[700]!,
+                width: 2,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(
+                "No favourites",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      return favouriteCards;
+    } else {
+      for (var pokemonName in favourites) {
+        favouriteCards.add(FavouriteCard(pokemonName: pokemonName, changeBodyWidget: widget.changeBodyWidget,));
       }
       return favouriteCards;
     }
@@ -537,125 +583,3 @@ class _UserProfileState extends State<UserProfile> {
   //   return maxType.backgroundColor;
   // }
 }
-
-// Expanded(
-// child: ListView(
-// scrollDirection: Axis.horizontal,
-// children: [
-// if (pokemonFavourites.length == 1)
-// Padding(
-// padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-// child: Align(
-// alignment: Alignment.topRight,
-// child: Card(
-// color: Colors.grey[300],
-// child: Padding(
-// padding: const EdgeInsets.all(15.0),
-// child: Text(
-// "No favourite\npokemon cards\nfound.",
-// textAlign: TextAlign.center,
-// style: TextStyle(
-// fontSize: 12,
-// color: Colors.grey[800],
-// ),
-// ),
-// )
-// ),
-// ),
-// ),
-// for (int i = 0; i < pokemonFavourites.length; i++)
-// Padding(
-// padding: const EdgeInsets.symmetric(horizontal: 8.0),
-// child: Column(
-// children: [
-// if (pokemonFavourites[i] != '')
-// FavouriteCard(pokemonName: pokemonFavourites[i]),
-// ],
-// ),
-// ),
-// ],
-// ),
-// ),
-// VerticalDivider(
-// color: Colors.grey[500],
-// thickness: 3,
-// width: 1,
-// endIndent: 5,
-// ),
-// Expanded(
-// child: ListView(
-// scrollDirection: Axis.horizontal,
-// children: [
-// if (cardFavourites.length == 1)
-// Padding(
-// padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-// child: Align(
-// alignment: Alignment.topRight,
-// child: Card(
-// color: Colors.grey[300],
-// child: Padding(
-// padding: const EdgeInsets.all(15.0),
-// child: Text(
-// "No favourite\npokemon cards\nfound.",
-// textAlign: TextAlign.center,
-// style: TextStyle(
-// fontSize: 12,
-// color: Colors.grey[800],
-// ),
-// ),
-// )
-// ),
-// ),
-// ),
-// for (int i = 0; i < cardFavourites.length; i++)
-// Padding(
-// padding: const EdgeInsets.symmetric(horizontal: 8.0),
-// child: Column(
-// children: [
-// if (cardFavourites[i] != '')
-// FavouriteCard(pokemonName: cardFavourites[i]),
-// ],
-// ),
-// ),
-// ],
-// ),
-// ),
-
-//
-// if(pokemonFavourites.length == 1) {
-// favouriteCards.add(
-// Padding(
-// padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-// child: Align(
-// alignment: Alignment.topRight,
-// child: Card(
-// color: Colors.grey[300],
-// child: Padding(
-// padding: const EdgeInsets.all(15.0),
-// child: Text(
-// "No favourite\npokemons found.",
-// textAlign: TextAlign.center,
-// style: TextStyle(
-// fontSize: 12,
-// color: Colors.grey[800],
-// ),
-// ),
-// )
-// ),
-// ),
-// ),
-// );
-// }
-// for (int i = 0; i < pokemonFavourites.length; i++) {
-// favouriteCards.add(
-// Padding(
-// padding: const EdgeInsets.symmetric(horizontal: 8.0),
-// child: Column(
-// children: [
-// if(pokemonFavourites[i] != '')
-// FavouriteCard(pokemonName: pokemonFavourites[i])
-// ],
-// ),
-// )
-// );
-// }

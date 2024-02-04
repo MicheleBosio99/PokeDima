@@ -67,3 +67,37 @@ Widget weaknessBoxes(List<PokemonType> types) {
           },
         );
 }
+
+Widget typeBoxWithButton(PokemonType type, Function onPressed) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Container(
+      width: 60,
+      height: 25,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), color: type.color),
+      child: Center(
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            padding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          onPressed: () { onPressed(type); },
+          child: Text(
+            type.name,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+}

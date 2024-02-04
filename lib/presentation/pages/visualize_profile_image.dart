@@ -39,15 +39,17 @@ class VisualizeProfileImage extends StatelessWidget {
             ],
           ),
 
-          // const SizedBox(height: 20,),
+          const SizedBox(height: 20,),
 
-          Align(
-            alignment: Alignment.center,
-            child: Image.network(
-              imageUrl,
-              width: 800,
-              scale: 0.8
-              // fit: BoxFit.cover,
+          Center(
+            child: Align(
+              alignment: Alignment.center,
+              child: Image.network(
+                imageUrl,
+                width: 800,
+                scale: 0.8
+                // fit: BoxFit.cover,
+              ),
             ),
           ),
         ],

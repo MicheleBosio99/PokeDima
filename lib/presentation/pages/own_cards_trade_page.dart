@@ -53,7 +53,7 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                       Column(children: [
                         // TODO: add search bar
 
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 60),
 
                         if(userCards.isNotEmpty)
                           Column(
@@ -165,7 +165,7 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                                     shadowColor: Colors.transparent,
                                     padding: const EdgeInsets.all(0),
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (userCardsChosen.isEmpty && widget.friendCardsChosen.isEmpty) {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
@@ -184,10 +184,11 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                                         ),
                                       );
                                     } else {
+                                      var numOfTrades = await FirebaseCloudServices().getNumberOfTradesAmongTwoUsers(user!.username, widget.friend.username);
                                       FirebaseCloudServices().uploadNewTrade(
                                           Trade(
-                                            tradeId: '',
-                                            senderUsername: user!.username,
+                                            tradeId: "#${(numOfTrades + 1).toString().padLeft(3, "0")}",
+                                            senderUsername: user.username,
                                             receiverUsername: widget.friend.username,
                                             pokemonCardsOffered: [],
                                             pokemonCardsRequested: [],
@@ -228,7 +229,7 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                                     width: 120,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
-                                      color: userCardsChosen.isEmpty && widget.friendCardsChosen.isEmpty ? Colors.grey[300] : Colors.green[700],
+                                      color: Colors.green[700],
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: const Row(

@@ -12,6 +12,18 @@
 ///       - asset: fonts/PokeDima.ttf
 ///
 /// 
+/// * Iconic, Copyright (C) 2012 by P.J. Onori
+///         Author:    P.J. Onori
+///         License:   SIL (http://scripts.sil.org/OFL)
+///         Homepage:  http://somerandomdude.com/work/iconic/
+/// * Font Awesome 4, Copyright (C) 2016 by Dave Gandy
+///         Author:    Dave Gandy
+///         License:   SIL ()
+///         Homepage:  http://fortawesome.github.com/Font-Awesome/
+/// * Material Design Icons, Copyright (C) Google, Inc
+///         Author:    Google
+///         License:   Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+///         Homepage:  https://design.google.com/icons/
 ///
 import 'package:flutter/widgets.dart';
 
@@ -21,9 +33,13 @@ class PokeDima {
   static const _kFontFam = 'PokeDima';
   static const String? _kFontPkg = null;
 
+  static const IconData exchange_round = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData pokemon = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData cards = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData password = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData scanner = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData personal = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData clock_thicc = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData clock_thin = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData exchange_thicc = IconData(0xf0ec, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

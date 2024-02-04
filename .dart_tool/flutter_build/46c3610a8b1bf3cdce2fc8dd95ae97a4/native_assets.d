@@ -1,1 +1,0 @@
- C:\\Users\\bosio\\All_Files\\DIMA\ -\ Project\ Pokedex\\PokeDima\\.dart_tool\\flutter_build\\46c3610a8b1bf3cdce2fc8dd95ae97a4\\native_assets.yaml: 

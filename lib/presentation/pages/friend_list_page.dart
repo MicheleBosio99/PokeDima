@@ -3,7 +3,6 @@ import 'package:pokedex_dima_new/data/firebase_cloud_services/firebase_cloud_ser
 import 'package:pokedex_dima_new/domain/firebase_cloud/user.dart';
 import 'package:pokedex_dima_new/domain/user.dart';
 import 'package:pokedex_dima_new/presentation/pages/friend_profile_page.dart';
-import 'package:pokedex_dima_new/presentation/pages/search_friend.dart';
 import 'package:pokedex_dima_new/presentation/widgets/auth_loading_bar.dart';
 import 'package:pokedex_dima_new/presentation/widgets/friend_list_tile.dart';
 import 'package:provider/provider.dart';
@@ -19,11 +18,15 @@ class FriendList extends StatefulWidget {
 
 class _FriendListState extends State<FriendList> {
   late User user;
-  late List<User> friends;
+  late List<User> friendsFullList;
+
+  final TextEditingController searchController = TextEditingController();
+  User? userSearched;
+  bool isFiltered = false;
 
   Future<void> _loadAsynchronousVariables(email) async {
     user = (await FirebaseCloudServices().getUserUsingEmail(email))!;
-    friends = await FirebaseCloudServices().getUserFriendListFromUsername(user.username);
+    friendsFullList = await FirebaseCloudServices().getUserFriendListFromUsername(user.username);
   }
 
   @override
@@ -43,35 +46,68 @@ class _FriendListState extends State<FriendList> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 30,),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 0, left: 20, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
 
-                  Row(
-                    children: [
-                      Container(
-                        width: 260,
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          "Friends List",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.bold,
+
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: isFiltered ? () {
+                            setState(() {
+                              isFiltered = false;
+                            });
+                          } : null,
+                          icon: const Icon(Icons.close),
+                          iconSize: 30,
+                          color: Colors.red[600],
+                          disabledColor: Colors.grey[400],
+                        ),
+
+                        const SizedBox(width: 20,),
+
+                        Container(
+                          width: 180,
+                          alignment: Alignment.center,
+                          child: TextFormField(
+                            onFieldSubmitted: (value) async  {
+                              var userFound = await FirebaseCloudServices().getUserUsingUsername(searchController.text);
+                              setState(() {
+                                isFiltered = true;
+                                userSearched = userFound;
+                              });
+                            },
+                            controller: searchController,
+                            decoration: InputDecoration(
+                              hintText: "Search for a user...",
+                              hintStyle: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[500],
+                              ),
+                              border: InputBorder.none,
+                            ),
                           ),
                         ),
-                      ),
 
-                      const SizedBox(width: 40,),
+                        const SizedBox(width: 20,),
 
-                      IconButton(
-                        onPressed: () { widget.changeBodyWidget(SearchFriend(changeBodyWidget: widget.changeBodyWidget), index: -1); },
-                        icon: const Icon(Icons.search_sharp),
-                        iconSize: 30,
-                        color: Colors.grey[800],
-                      ),
-
-
-                    ],
+                        IconButton(
+                          onPressed: () async {
+                            var userFound = await FirebaseCloudServices().getUserUsingUsername(searchController.text);
+                            setState(() {
+                              isFiltered = true;
+                              userSearched = userFound;
+                            });
+                          },
+                          icon: const Icon(Icons.search_outlined),
+                          iconSize: 30,
+                          color: Colors.grey[800],
+                        ),
+                      ],
+                    ),
                   ),
 
                   Divider(
@@ -81,31 +117,39 @@ class _FriendListState extends State<FriendList> {
                     endIndent: 50,
                   ),
 
-                  if(friends.isEmpty)
+                  const SizedBox(height: 10,),
+
+                  if(!isFiltered && friendsFullList.isEmpty)
+                    const Text("You have no friends yet."),
+
+                  if(!isFiltered && friendsFullList.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0,),
+                      padding: const EdgeInsets.only(right: 20.0, left: 20, top: 0, bottom: 10),
                       child: Container(
                         alignment: Alignment.center,
-                        child: Text(
-                          "You have no friends yet. Go to the search page and find some!",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey[400],
-                            fontWeight: FontWeight.bold,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: _getListOfFriendsTile(friendsFullList, widget.changeBodyWidget, true),
                           ),
                         ),
                       ),
                     ),
 
-                  if(friends.isNotEmpty)
+                  if(isFiltered && userSearched == null)
+                    const Text("No user was found."),
+
+                  if(isFiltered && userSearched != null)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0,),
+                      padding: const EdgeInsets.only(right: 20.0, left: 20, top: 0, bottom: 10),
                       child: Container(
                         alignment: Alignment.center,
                         child: SingleChildScrollView(
                           child: Column(
-                            children: _getListOfFriendsTile(friends, widget.changeBodyWidget),
+                            children: _getListOfFriendsTile(
+                              [userSearched!],
+                              widget.changeBodyWidget,
+                              friendsFullList.any((element) => element.username == userSearched!.username)
+                            ),
                           ),
                         ),
                       ),
@@ -119,7 +163,7 @@ class _FriendListState extends State<FriendList> {
     );
   }
 
-  List<Widget> _getListOfFriendsTile(List<User> friends, Function changeBodyWidget) {
+  List<Widget> _getListOfFriendsTile(List<User> friends, Function changeBodyWidget, bool isAlreadyFriend) {
     List<Widget> listOfFriendsTile = [];
     for(var friend in friends) {
       listOfFriendsTile.add(
@@ -127,7 +171,16 @@ class _FriendListState extends State<FriendList> {
           onTap: () { widget.changeBodyWidget(FriendProfile(changeBodyWidget: widget.changeBodyWidget, friend: friend, username: user.username), index: -1); },
           child: FriendListTile(
               friend: friend,
-              addFriendButton: const SizedBox.shrink(),
+              addFriendButton: isAlreadyFriend ? const SizedBox.shrink() :
+              IconButton(
+                onPressed: () async {
+                  await FirebaseCloudServices().addFriendWithUsername(user.username, friend.username);
+                  widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1);
+                },
+                icon: const Icon(Icons.add_circle_outline_sharp),
+                iconSize: 32,
+                color: Colors.grey[800],
+              ),
           ),
         ),
       );

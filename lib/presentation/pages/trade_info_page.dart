@@ -33,18 +33,19 @@ class TradeInfoPage extends StatelessWidget {
           );
         } else {
           var friend = snapshot.data!;
-          return SingleChildScrollView(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    _getBackgroundColor(),
-                    Colors.grey[200]!,
-                  ],
-                ),
+          return Container(
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  _getBackgroundColor(),
+                  Colors.grey[200]!,
+                ],
               ),
+            ),
+            child: SingleChildScrollView(
               child: Column(
                 children: [
                   const SizedBox(
@@ -54,7 +55,7 @@ class TradeInfoPage extends StatelessWidget {
                     children: [
                       Center(
                         child: Text(
-                          "Trade #001${trade.tradeId}",
+                          "Trade ${trade.tradeId}",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 26,
@@ -72,6 +73,37 @@ class TradeInfoPage extends StatelessWidget {
                           },
                           icon: Icon(
                             Icons.arrow_back_rounded,
+                            color: Colors.grey[800],
+                            size: 32,
+                          ),
+                        ),
+                      ),
+
+                      Positioned(
+                        right: 40,
+                        top: -5,
+                        child: IconButton(
+                          onPressed: () async {
+                            await FirebaseCloudServices().deleteTrade(trade);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                duration: const Duration(seconds: 2),
+                                content: Center(
+                                  child: Text(
+                                    "The trade has been deleted",
+                                    style: TextStyle(
+                                      color: Colors.grey[200],
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                            changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget));
+                          },
+                          icon: Icon(
+                            Icons.delete,
                             color: Colors.grey[800],
                             size: 32,
                           ),

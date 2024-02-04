@@ -528,4 +528,39 @@ class FirebaseCloudServices {
       print('Error deleting trade: $e');
     }
   }
+
+  Future<int> getNumberOfTradesAmongTwoUsers(String userUsername, String friendUsername) {
+    return Future.wait([getTradesSentByUsername(userUsername), getTradesProposedToUsername(userUsername)])
+        .then((List<List<Trade>> trades) {
+      return trades[0].where((trade) => trade.receiverUsername == friendUsername).length +
+          trades[1].where((trade) => trade.senderUsername == friendUsername).length;
+    });
+  }
+
+  Future<void> deleteTrade(Trade trade) async {
+    return _firestore.collection(_tradesCollectionName).where('tradeId', isEqualTo: trade.tradeId).get().then((querySnapshot) {
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.reference.delete();
+      }
+    });
+  }
+
+  Future<List<User>> getAllUserWithStringInUsername(String search) {
+    return _firestore.collection(_usersCollectionName).where('username', isEqualTo: search).get().then((querySnapshot) {
+      List<User> users = [];
+      for (var user in querySnapshot.docs) {
+        users.add(User(
+          username: user.get('username'),
+          email: user.get('email'),
+          realName: user.get('realName'),
+          profilePictureUrl: user.get('profilePictureUrl'),
+          bio: user.get('bio'),
+          favouriteColor: user.get('favouriteColor'),
+          friendsUsernames: List<String>.from(user.get('friendsUsernames')),
+          accountCreationDate: user.get('accountCreationDate'),
+        ));
+      }
+      return users;
+    });
+  }
 }

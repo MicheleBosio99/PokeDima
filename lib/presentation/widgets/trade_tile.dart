@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/domain/firebase_cloud/trade.dart';
 import 'package:pokedex_dima_new/domain/firebase_cloud/user.dart';
+import 'package:pokedex_dima_new/images/icons/poke_dima_icons.dart';
 import 'package:pokedex_dima_new/presentation/pages/trade_info_page.dart';
 
 class TradeTile extends StatelessWidget {
@@ -72,8 +73,8 @@ class TradeTile extends StatelessWidget {
                     const SizedBox(width: 10,),
 
                     Icon(
-                      Icons.compare_arrows_rounded,
-                      size: 32,
+                      PokeDima.exchange_round,
+                      size: 24,
                       color: Colors.grey[800],
                     ),
 
@@ -129,7 +130,7 @@ class TradeTile extends StatelessWidget {
       case "visualized":
         return Icon(Icons.remove_red_eye, size: 40, color: Colors.blue[700],);
       case "pending":
-        return Icon(Icons.lock_clock, size: 40, color: Colors.grey[900],);
+        return Icon(PokeDima.clock_thin, size: 36, color: Colors.grey[900],);
       default:
         return Icon(Icons.error, size: 40, color: Colors.red[700],);
     }

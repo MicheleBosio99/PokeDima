@@ -189,11 +189,15 @@ class _FriendProfileState extends State<FriendProfile> {
 
                 const SizedBox(height: 30,),
 
-                Text(
-                  user.bio,
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.grey[800],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 0),
+                  child: Text(
+                    user.bio,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey[800],
+                    ),
                   ),
                 ),
 

@@ -17,6 +17,7 @@ class TradesListPage extends StatefulWidget {
 }
 
 class _TradesListPageState extends State<TradesListPage> {
+
   final TextEditingController searchController = TextEditingController();
   List<Trade>? tradesFiltered;
   bool isFiltered = false;

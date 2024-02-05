@@ -4,13 +4,13 @@ import 'package:pokedex_dima_new/presentation/pages/pokemon_card_info_page.dart'
 
 
 
-class SingleCardShow extends StatelessWidget {
+class SingleCardShowImage extends StatelessWidget {
 
   final PokemonCard card;
   final Function changeBodyWidget;
   final double width;
   final double height;
-  const SingleCardShow({ super.key, required this.card, required this.changeBodyWidget, this.width = 80, this.height = 120 });
+  const SingleCardShowImage({ super.key, required this.card, required this.changeBodyWidget, this.width = 80, this.height = 120 });
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +29,19 @@ class SingleCardShow extends StatelessWidget {
           width: width,
           height: height,
           decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(card.imageUrl),
-              fit: BoxFit.cover,
-            ),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: Colors.grey[800]!,
               width: 3,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: FadeInImage.assetNetwork(
+              placeholder: 'lib/images/icons/bulbasaur_icon.png',
+              fadeOutDuration: const Duration(milliseconds: 100),
+              image: card.imageUrl,
+              fit: BoxFit.cover,
             ),
           ),
         ),

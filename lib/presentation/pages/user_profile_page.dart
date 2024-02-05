@@ -493,7 +493,7 @@ class _UserProfileState extends State<UserProfile> {
     } else {
       for (var pokemonName in favourites) {
         favouriteCards.add(
-            SingleCardShow(
+            SingleCardShowImage(
               card: Provider.of<PokemonCardsProvider>(context, listen: false).getPokemonCardByPokemonName(pokemonName),
               changeBodyWidget: widget.changeBodyWidget,
               width: 118,

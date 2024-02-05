@@ -48,7 +48,7 @@ class TradeTile extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    "#001",
+                    trade.tradeId,
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.grey[800],

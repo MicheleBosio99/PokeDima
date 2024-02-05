@@ -12,7 +12,6 @@ import 'package:pokedex_dima_new/presentation/widgets/pokemon_card_tile.dart';
 import 'package:provider/provider.dart';
 
 class OwnTradeCardsCollection extends StatefulWidget {
-
   final User friend;
   final List<PokemonCard> friendCardsChosen;
   final Function changeBodyWidget;
@@ -32,76 +31,83 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
 
   void addCardToFriendCollection(String cardId) {
     var card = userCards.firstWhere((element) => element.id == cardId);
-    if (!userCardsChosen.contains(card)) { userCardsChosen.add(card); }
-    else { userCardsChosen.remove(card); }
+    if (!userCardsChosen.contains(card)) {
+      userCardsChosen.add(card);
+    } else {
+      userCardsChosen.remove(card);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: _loadAsynchronousVariables(Provider.of<UserAuthInfo?>(context, listen: false)!.email),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+        builder: (context, snapshotFuture) {
+          if (snapshotFuture.connectionState == ConnectionState.waiting) {
             return const Align(alignment: Alignment.center, child: AuthLoadingBar());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+          } else if (snapshotFuture.hasError) {
+            return Text('Error: ${snapshotFuture.error}');
           } else {
-            userCards = Provider.of<PokemonCardsProvider>(context).pokemonCardsList;
-            final user = snapshot.data;
-            return Stack(
+            final user = snapshotFuture.data!;
+            return StreamBuilder(
+                stream: FirebaseCloudServices().getStreamOfPokemonCardsByUsername(user.username),
+                builder: (context, snapshotStream) {
+                  if (snapshotStream.connectionState == ConnectionState.waiting) { return const AuthLoadingBar(); }
+                  else if (snapshotStream.hasError) { return Text('Error: ${snapshotStream.error}'); }
+
+                  userCards = snapshotStream.data!;
+                  return Stack(
                     children: [
                       Column(children: [
                         // TODO: add search bar
 
                         const SizedBox(height: 60),
 
-                        if(userCards.isNotEmpty)
-                          Column(
-                            children: userCards
-                                .map<Widget>((pokemonCard) => PokemonCardTile(
-                                      pokemonCard: pokemonCard,
-                                      changeBodyWidget: widget.changeBodyWidget,
-                                      onLongPressAdd: addCardToFriendCollection,
-                                    ))
-                                .toList(),
+                        if (userCards.isNotEmpty)
+                          Expanded(
+                            child: ListView(
+                              children: userCards
+                                  .map<Widget>((pokemonCard) => PokemonCardTile(
+                                        pokemonCard: pokemonCard,
+                                        changeBodyWidget: widget.changeBodyWidget,
+                                        onLongPressAdd: addCardToFriendCollection,
+                                      ))
+                                  .toList(),
+                            ),
                           ),
 
-                        if(userCards.isEmpty)
+                        if (userCards.isEmpty)
                           Center(
-                            child: Column(
-                                children: [
-                                  const SizedBox(height: 20),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Color(int.parse(widget.friend.favouriteColor)),
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color: Colors.grey[800]!,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                        child: Text(
-                                          "${widget.friend.username} doesn't have any cards yet, but you can still donate some cards to him/her.",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.grey[500],
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
+                            child: Column(children: [
+                              const SizedBox(height: 20),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Color(int.parse(widget.friend.favouriteColor)),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Colors.grey[800]!,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                    child: Text(
+                                      "${widget.friend.username} doesn't have any cards yet, but you can still donate some cards to him/her.",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.grey[500],
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
-                                ]
-                            ),
+                                ),
+                              ),
+                            ]),
                           ),
                       ]),
-
-
                       Positioned(
                         top: -10,
                         left: -15,
@@ -115,13 +121,11 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                             children: [
                               IconButton(
                                 onPressed: () {
-                                  widget.changeBodyWidget(
-                                    FriendCardsCollection(
-                                      username: user!.username,
-                                      friend: widget.friend,
-                                      changeBodyWidget: widget.changeBodyWidget,
-                                    )
-                                  );
+                                  widget.changeBodyWidget(FriendCardsCollection(
+                                    username: user!.username,
+                                    friend: widget.friend,
+                                    changeBodyWidget: widget.changeBodyWidget,
+                                  ));
                                 },
                                 icon: Icon(
                                   Icons.arrow_back_rounded,
@@ -143,8 +147,6 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                           ),
                         ),
                       ),
-
-
                       Positioned(
                         top: -10,
                         right: -15,
@@ -171,23 +173,24 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                                         const SnackBar(
                                           content: Center(
                                               child: Text(
-                                                "You cannot create an empty trade!",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              )
-                                          ),
+                                            "You cannot create an empty trade!",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )),
                                           duration: Duration(seconds: 2),
                                         ),
                                       );
                                     } else {
                                       var numOfTrades = await FirebaseCloudServices().getNumberOfTradesAmongTwoUsers(user!.username, widget.friend.username);
+                                      var firstLetterUsername = user.username[0].toUpperCase();
+                                      var firstLetterFriend = widget.friend.username[0].toUpperCase();
                                       FirebaseCloudServices().uploadNewTrade(
                                           Trade(
-                                            tradeId: "#${(numOfTrades + 1).toString().padLeft(3, "0")}",
+                                            tradeId: "${firstLetterUsername}${firstLetterUsername}${(numOfTrades + 1).toString()}",
                                             senderUsername: user.username,
                                             receiverUsername: widget.friend.username,
                                             pokemonCardsOffered: [],
@@ -196,20 +199,19 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                                             timestamp: DateTime.now().toString(),
                                           ),
                                           userCardsChosen,
-                                          widget.friendCardsChosen
-                                      );
+                                          widget.friendCardsChosen);
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           content: Center(
-                                              child: Text(
-                                                "Trade proposal sent to ${widget.friend.username}",
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                            child: Text(
+                                              "Trade proposal sent to ${widget.friend.username}",
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
                                               ),
+                                            ),
                                           ),
                                           duration: const Duration(seconds: 2),
                                         ),
@@ -225,39 +227,35 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                                     }
                                   },
                                   child: Container(
-                                    height: 45,
-                                    width: 120,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: Colors.green[700],
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Trade',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
+                                      height: 45,
+                                      width: 120,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: Colors.green[700],
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: const Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Trade',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-
-                                        SizedBox(width: 10),
-
-                                        Icon(
-                                          Icons.compare_arrows_rounded,
-                                          color: Colors.white,
-                                          size: 32,
-                                        ),
-                                      ],
-                                    )
-                                  ),
+                                          SizedBox(width: 10),
+                                          Icon(
+                                            Icons.compare_arrows_rounded,
+                                            color: Colors.white,
+                                            size: 32,
+                                          ),
+                                        ],
+                                      )),
                                 ),
                               ),
-
                               const SizedBox(width: 10),
                             ],
                           ),
@@ -265,6 +263,7 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                       ),
                     ],
                   );
+                });
           }
         });
   }

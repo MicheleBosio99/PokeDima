@@ -10,6 +10,7 @@ import 'package:pokedex_dima_new/presentation/widgets/pokemon_card_tile.dart';
 import 'package:provider/provider.dart';
 
 class FriendCardsCollection extends StatefulWidget {
+
   final String username;
   final User friend;
   final Function changeBodyWidget;
@@ -56,14 +57,16 @@ class _FriendCardsCollectionState extends State<FriendCardsCollection> {
                   // TODO: add search bar
 
                   if(friendCards.isNotEmpty)
-                    Column(
-                      children: friendCards
-                          .map<Widget>((pokemonCard) => PokemonCardTile(
-                                pokemonCard: pokemonCard,
-                                changeBodyWidget: widget.changeBodyWidget,
-                                onLongPressAdd: addCardToFriendCollection,
-                              ))
-                          .toList(),
+                    Expanded(
+                      child: ListView(
+                        children: friendCards.map<Widget>(
+                                (pokemonCard) => PokemonCardTile(
+                                  pokemonCard: pokemonCard,
+                                  changeBodyWidget: widget.changeBodyWidget,
+                                  onLongPressAdd: addCardToFriendCollection,
+                                ))
+                            .toList(),
+                      ),
                     ),
 
                   if(friendCards.isEmpty)

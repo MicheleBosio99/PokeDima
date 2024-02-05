@@ -53,6 +53,14 @@ class FirebaseCloudServices {
     }
   }
 
+  Stream<List<PokemonCard>> getStreamOfPokemonCardsByUsername(String username) {
+    if(username.isEmpty) { return const Stream.empty(); }
+    return _firestore.collection(_cardsCollectionName).doc(username).snapshots().map((snapshot) {
+      var cards = snapshot.data()?[_cardsField] as List<dynamic>? ?? [];
+      return cards.map((card) => PokemonCard.fromJson(card)).toList();
+    });
+  }
+
 
 
   // USERS COLLECTION METHODS
@@ -93,7 +101,7 @@ class FirebaseCloudServices {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
           .collection(_usersCollectionName)
-          .where('email', isEqualTo: userEmail)
+          .where('email', isEqualTo: userEmail.toLowerCase())
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
@@ -311,7 +319,9 @@ class FirebaseCloudServices {
   Future<List<Trade>> getAllUserTrades(String username) {
     return Future.wait([getTradesSentByUsername(username), getTradesProposedToUsername(username)])
         .then((List<List<Trade>> trades) {
-      return trades[0] + trades[1];
+          var allTrades = trades[0] + trades[1];
+          allTrades.sort((a, b) => DateTime.parse(b.timestamp).compareTo(DateTime.parse(a.timestamp)));
+          return allTrades;
     });
   }
 

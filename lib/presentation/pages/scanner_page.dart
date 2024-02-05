@@ -276,7 +276,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   String getRandomBatchNumber() {
     final random = Random();
     final num = random.nextInt(128);
-    return "${random.nextInt(num).toString().padRight(2, "0")}/${num.toString().padLeft(3, "0")}";
+    return "${random.nextInt(num).toString().padRight(2, "0")}/${num.toString().padLeft(2, "0")}";
   }
 
   String _getNextId(String? pokemonName) {

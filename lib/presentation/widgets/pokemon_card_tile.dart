@@ -44,7 +44,7 @@ class _PokemonCardTileState extends State<PokemonCardTile> {
         widget.onLongPressAdd == null ? () {} : widget.onLongPressAdd!(widget.pokemonCard.id);
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0,),
+        padding: const EdgeInsets.only(top: 0, bottom: 10, left: 20, right: 20),
         child:
             widget.onLongPressAdd == null ?
             Padding(
@@ -103,7 +103,7 @@ class _PokemonCardTileState extends State<PokemonCardTile> {
         children: [
           const SizedBox(width: 0,),
 
-          SingleCardShow(card: widget.pokemonCard, changeBodyWidget: widget.changeBodyWidget, width: 60, height: 90,),
+          SingleCardShowImage(card: widget.pokemonCard, changeBodyWidget: widget.changeBodyWidget, width: 60, height: 90,),
 
           // const SizedBox(width: 5,),
 

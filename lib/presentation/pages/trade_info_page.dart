@@ -197,7 +197,7 @@ class TradeInfoPage extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children:
                                       trade.pokemonCardsOffered.map((card) =>
-                                          SingleCardShow(card: card, changeBodyWidget: changeBodyWidget)
+                                          SingleCardShowImage(card: card, changeBodyWidget: changeBodyWidget)
                                       ).toList(),
                                     ),
                                   ),
@@ -241,7 +241,7 @@ class TradeInfoPage extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children:
                                       trade.pokemonCardsRequested.map((card) =>
-                                          SingleCardShow(card: card, changeBodyWidget: changeBodyWidget)
+                                          SingleCardShowImage(card: card, changeBodyWidget: changeBodyWidget)
                                       ).toList(),
                                     ),
                                   ),

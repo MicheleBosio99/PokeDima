@@ -97,174 +97,71 @@ class _PokemonCardTileState extends State<PokemonCardTile> {
 
   Widget _getCardTile(Pokemon relativePokemon) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      padding: const EdgeInsets.all(5.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          const SizedBox(width: 0,),
+          SingleCardShowImage(card: widget.pokemonCard, changeBodyWidget: widget.changeBodyWidget, width: 140, height: 180,),
 
-          SingleCardShowImage(card: widget.pokemonCard, changeBodyWidget: widget.changeBodyWidget, width: 60, height: 90,),
-
-          // const SizedBox(width: 5,),
-
-          Column(
-            children: [
-              Text(
-                widget.pokemonCard.pokemonName,
-                style: TextStyle(
-                  color: Colors.grey[800],
-                  fontSize: 22.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              // const SizedBox(height: 5,),
-
-              Text(
-                "-${widget.pokemonCard.numInBatch}-",
-                style: TextStyle(
-                  color: Colors.grey[800],
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-
-          // const SizedBox(width: 20,),
-
-          verticalTypeBoxes(
-            relativePokemon.pokemonTypes,
-            distance: 20.0,
-          ),
-
-          // const SizedBox(width: 20,),
+          // const SizedBox(width: 10),
 
           Padding(
-            padding: const EdgeInsets.only(right: 10,),
-            child: _getRarityIcon(widget.pokemonCard.rarity),
+            padding: const EdgeInsets.only(right: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  widget.pokemonCard.pokemonName,
+                  style: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  "-${widget.pokemonCard.numInBatch}-",
+                  style: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                Icon(
+                  _getRarityIcon(widget.pokemonCard.rarity),
+                  color: Colors.grey[800],
+                  size: 32,
+                ),
+
+                const SizedBox(height: 20),
+
+                verticalTypeBoxes(
+                  relativePokemon.pokemonTypes,
+                  distance: 20.0,
+                ),
+
+                const SizedBox(height: 10),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Icon _getRarityIcon(String rarity) {
+  IconData _getRarityIcon(String rarity) {
     switch (rarity) {
-      case "Common":
-        return Icon(
-          Icons.circle_outlined,
-          color: Colors.grey[800],
-          size: 32,
-        );
-      case "Uncommon":
-        return Icon(
-          Icons.circle,
-          color: Colors.grey[800],
-          size: 32,
-        );
-      case "Rare":
-        return Icon(
-          Icons.square_outlined,
-          color: Colors.grey[800],
-          size: 32,
-        );
-      case "Very Rare":
-        return Icon(
-          Icons.square,
-          color: Colors.grey[800],
-          size: 32,
-        );
-      case "Legendary":
-        return Icon(
-          Icons.star,
-          color: Colors.orange[600],
-          size: 32,
-        );
-      default:
-        return Icon(
-          Icons.circle_outlined,
-          color: Colors.grey[800],
-          size: 32,
-        );
+      case "Common": return Icons.circle_outlined;
+      case "Uncommon": return Icons.circle;
+      case "Rare": return Icons.square_outlined;
+      case "Ultra Rare": return Icons.square;
+      case "Legendary": return Icons.star;
+      default: return Icons.circle_outlined;
     }
   }
 }
-
-// GestureDetector(
-// onTap: () {
-// widget.changeBodyWidget(PokemonCardInfoPage(
-// pokemonCard: widget.pokemonCard,
-// changeBodyWidget: widget.changeBodyWidget,
-// ));
-// },
-// onLongPress: () {
-// toggleSelected();
-// widget.onLongPressAdd == null ? () {} : widget.onLongPressAdd!(widget.pokemonCard.id);
-// },
-// child: Padding(
-// padding: const EdgeInsets.all(10.0),
-// child: Container(
-// decoration: BoxDecoration(
-// color: !isSelected ? relativePokemon.pokemonTypes[0].backgroundColor : Colors.yellow[200],
-// borderRadius: BorderRadius.circular(20),
-// border: !isSelected
-// ? Border.all(
-// color: Colors.grey[800]!,
-// width: 5,
-// )
-//     : Border.all(
-// color: Colors.deepPurple[200]!,
-// width: 5,
-// ),
-// ),
-// alignment: Alignment.center,
-// child: Padding(
-// padding: const EdgeInsets.all(10.0),
-// child: Row(
-// children: [
-// Image.network(
-// widget.pokemonCard.imageUrl,
-// height: 100,
-// width: 100,
-// ),
-// Column(
-// children: [
-// Text(
-// widget.pokemonCard.pokemonName,
-// style: TextStyle(
-// color: Colors.grey[800],
-// fontSize: 22.0,
-// fontWeight: FontWeight.bold,
-// ),
-// ),
-// const SizedBox(
-// height: 5,
-// ),
-// Text(
-// widget.pokemonCard.numInBatch,
-// style: TextStyle(
-// color: Colors.grey[800],
-// fontSize: 18.0,
-// fontWeight: FontWeight.bold,
-// ),
-// ),
-// ],
-// ),
-// const SizedBox(
-// width: 20,
-// ),
-// verticalTypeBoxes(
-// relativePokemon.pokemonTypes,
-// distance: 20.0,
-// ),
-// const SizedBox(
-// width: 35,
-// ),
-// _getRarityIcon(widget.pokemonCard.rarity),
-// ],
-// ),
-// ),
-// ),
-// ),
-// );

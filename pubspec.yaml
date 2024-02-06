@@ -59,6 +59,9 @@ dependencies:
   selectable_container: ^1.0.7
   firebase_messaging: ^14.7.14
   flutter_launcher_icons: ^0.13.1
+  fake_cloud_firestore: ^2.4.8
+  firebase_auth_mocks: ^0.13.0
+  network_image_mock: ^2.1.1
 #  firebase_app_check: ^0.2.1+8
 #  tflite: ^1.1.2
 

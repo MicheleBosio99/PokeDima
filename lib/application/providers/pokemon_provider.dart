@@ -11,6 +11,11 @@ class PokemonProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addPokemonToList(Pokemon pokemon) {
+    _pokemonList.add(pokemon);
+    notifyListeners();
+  }
+
   void setPokemonList(List<Pokemon> list) {
     _pokemonList = list;
     notifyListeners();

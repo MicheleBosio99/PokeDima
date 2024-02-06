@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.dart';
 import 'package:pokedex_dima_new/data/firebase_cloud_services/firebase_cloud_services.dart';
@@ -26,20 +25,20 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   late User user;
-  late List<String> pokemonFavourites;
-  late List<String> cardFavourites;
+  List<String> pokemonFavourites = [];
+  List<String> cardFavourites = [];
 
   Future<void> _loadAsynchronousVariables(email) async {
     user = (await FirebaseCloudServices().getUserUsingEmail(email))!;
-    pokemonFavourites = await Favourites(favouriteType: "pokemon").loadFavourites();
-    cardFavourites = await Favourites(favouriteType: "cards").loadFavourites();
+    pokemonFavourites = await Favourites(favouriteType: "pokemon").loadFavourites(user.username);
+    cardFavourites = await Favourites(favouriteType: "cards").loadFavourites(user.username);
   }
 
   @override
   Widget build(BuildContext context) {
     final email = Provider.of<UserAuthInfo?>(context, listen: false)!.email;
 
-    return FutureBuilder<void>(
+    return FutureBuilder(
       future: _loadAsynchronousVariables(email),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -47,8 +46,9 @@ class _UserProfileState extends State<UserProfile> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+          print(user.favouriteColor);
           final backgroundColor = Color(int.parse(user.favouriteColor));
-          final maxLength = max(pokemonFavourites.length, cardFavourites.length).toDouble();
+
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -454,13 +454,8 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  List<Widget>? getFavouriteCards(List<String> favouritesFull) {
+  List<Widget>? getFavouriteCards(List<String> favourites) {
     List<Widget> favouriteCards = [];
-
-    if (favouritesFull.isEmpty) {
-      return null;
-    }
-    final favourites = favouritesFull.sublist(1);
 
     if (favourites.isEmpty) {
       favouriteCards.add(
@@ -505,13 +500,8 @@ class _UserProfileState extends State<UserProfile> {
     }
   }
 
-  List<Widget>? getFavouritePokemon(List<String> favouritesFull) {
+  List<Widget>? getFavouritePokemon(List<String> favourites) {
     List<Widget> favouriteCards = [];
-
-    if (favouritesFull.isEmpty) {
-      return null;
-    }
-    final favourites = favouritesFull.sublist(1);
 
     if (favourites.isEmpty) {
       favouriteCards.add(

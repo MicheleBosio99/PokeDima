@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
+import 'package:pokedex_dima_new/application/providers/username_provider.dart';
+import 'package:pokedex_dima_new/data/firebase_cloud_services/firebase_cloud_services.dart';
+import 'package:pokedex_dima_new/domain/pokemon.dart';
+import 'package:pokedex_dima_new/domain/pokemon_type.dart';
+import 'package:provider/provider.dart';
 
 class FavouriteIcon extends StatefulWidget {
 
@@ -15,46 +20,37 @@ class FavouriteIcon extends StatefulWidget {
 class _FavouriteIconState extends State<FavouriteIcon> {
 
   late bool isFavourite;
-  late Future<List<String>> favouritePokemons;
-  late final Favourites favPokemons = Favourites(favouriteType: widget.favouriteType);
+  late Favourites favPokemons = Favourites(favouriteType: widget.favouriteType);
 
-  @override
-  void initState() {
-    super.initState();
-    favouritePokemons = favPokemons.loadFavourites();
-  }
-
-  void toggleFavourite(List<String> currentFavourites) {
+  Future<void> toggleFavourite(String username) async {
+    await favPokemons.saveFavourites(widget.pokemonName, !isFavourite, username);
     setState(() {
-      isFavourite = currentFavourites.contains(widget.pokemonName);
-      if (isFavourite) {
-        currentFavourites.remove(widget.pokemonName);
-      } else {
-        currentFavourites.add(widget.pokemonName);
-      }
-      favPokemons.saveFavourites(currentFavourites);
+      isFavourite = !isFavourite;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var username = Provider.of<UsernameProvider?>(context)!.username;
+
     return FutureBuilder<List<String>>(
-      future: favouritePokemons,
+      future: favPokemons.loadFavourites(username),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return const Text('Error loading data');
-        } else {
-          List<String> currentFavourites = snapshot.data ?? [];
-          isFavourite = currentFavourites.contains(widget.pokemonName);
+        if (snapshot.connectionState == ConnectionState.waiting) { return Container(); }
+        else if (snapshot.hasError) { return const Text('Error loading data'); }
+        else {
+          isFavourite = snapshot.data!.contains(widget.pokemonName);
+
           return IconButton(
             icon: Icon(
               isFavourite ? Icons.star : Icons.star_border,
               size: 32,
               color: isFavourite ? Colors.yellow : null,
             ),
-            onPressed: () => toggleFavourite(currentFavourites),
+            onPressed: () async {
+              await toggleFavourite(username);
+              favPokemons.setUserFavouriteColor(username, context);
+            },
           );
         }
       },
@@ -66,55 +62,52 @@ class _FavouriteIconState extends State<FavouriteIcon> {
 
 class Favourites {
 
-  final favouriteType;
-  Favourites({ required this.favouriteType});
+  final String favouriteType;
+  Favourites({ required this.favouriteType });
 
-  Future<void> saveFavourites(List<String> favourites) async {
-    final prefs = await SharedPreferences.getInstance();
-    final serializedList = favourites.join(';');
-    await prefs.setString('favourite$favouriteType', serializedList);
+  Future<void> saveFavourites(String pokemonName, bool toAdd, String username) async {
+    await FirebaseCloudServices().updateUserFavourites(username, pokemonName, toAdd, favouriteType);
   }
 
-  Future<List<String>> loadFavourites() async {
-    final prefs = await SharedPreferences.getInstance();
-    final serializedList = prefs.getString('favourite$favouriteType') ?? '';
-    return serializedList.split(';');
+  Future<List<String>> loadFavourites(String username) async {
+    return await FirebaseCloudServices().loadUserFavourites(username, favouriteType);
+
   }
 
+  void setUserFavouriteColor(String username, BuildContext context) async {
+    var favourites = await loadFavourites(username);
+    var pokemonList = Provider.of<PokemonProvider>(context, listen: false).pokemonList;
 
-  // void setUserFavouriteColor(String username, List<String> favourites, BuildContext context) {
-  //   var pokemonList = Provider.of<PokemonProvider>(context, listen: false).pokemonList;
-  //   favourites.removeAt(0);
-  //
-  //   var favouritePokemons = favourites.map((pokemonName) {
-  //     return pokemonList.firstWhere((pokemon) => pokemon.name == pokemonName);
-  //   }).toList();
-  //
-  //   FirebaseCloudServices().updateUserFavouriteColor(username, _findMostFrequentType(favouritePokemons));
-  // }
-  //
-  // Color _findMostFrequentType(List<Pokemon> pokemonList) {
-  //   Map<String, int> typeFrequency = {};
-  //
-  //   for (var pokemon in pokemonList) {
-  //     for (var type in pokemon.pokemonTypes) {
-  //       if (typeFrequency.containsKey(type.name)) {
-  //         typeFrequency[type.name] = typeFrequency[type.name]! + 1;
-  //       } else {
-  //         typeFrequency[type.name] = 1;
-  //       }
-  //     }
-  //   }
-  //
-  //   var max = 0;
-  //   var mostFrequentType = "";
-  //   for (var type in typeFrequency.keys) {
-  //     if (typeFrequency[type]! > max) {
-  //       max = typeFrequency[type]!;
-  //       mostFrequentType = type;
-  //     }
-  //   }
-  //
-  //   return PokemonType.fromJson(mostFrequentType).backgroundColor;
-  // }
+    var favouritePokemons = favourites.map((pokemonName) {
+      return pokemonList.firstWhere((pokemon) => pokemon.name == pokemonName);
+    }).toList();
+
+    FirebaseCloudServices().updateUserFavouriteColor(username, _findMostFrequentType(favouritePokemons));
+  }
+
+  Color _findMostFrequentType(List<Pokemon> pokemonList) {
+    Map<String, int> typeFrequency = {};
+
+    for (var pokemon in pokemonList) {
+      for (var type in pokemon.pokemonTypes) {
+        if (typeFrequency.containsKey(type.name)) {
+          typeFrequency[type.name] = typeFrequency[type.name]! + 1;
+        } else {
+          typeFrequency[type.name] = 1;
+        }
+      }
+    }
+
+    var max = -1;
+    var mostFrequentType = "";
+    for (var type in typeFrequency.keys) {
+      if (typeFrequency[type]! > max) {
+        max = typeFrequency[type]!;
+        mostFrequentType = type;
+      }
+    }
+
+    if (max == -1) { return const Color(0xEEEEEEFF); }
+    return PokemonType.fromJson(mostFrequentType).backgroundColor;
+  }
 }

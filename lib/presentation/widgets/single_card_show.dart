@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/domain/pokemon_card.dart';
 import 'package:pokedex_dima_new/presentation/pages/pokemon_card_info_page.dart';
 
-
-
 class SingleCardShowImage extends StatelessWidget {
 
   final PokemonCard card;

@@ -1,4 +1,3 @@
-
 import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.dart';
 import 'package:pokedex_dima_new/data/firebase_cloud_services/firebase_cloud_services.dart';
 

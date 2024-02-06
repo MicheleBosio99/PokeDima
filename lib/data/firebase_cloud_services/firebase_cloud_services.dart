@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pokedex_dima_new/application/deserializers/pokemon_cards_deserializer.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.dart';
@@ -9,17 +10,18 @@ import 'package:pokedex_dima_new/domain/pokemon_card.dart';
 import 'package:provider/provider.dart';
 
 class FirebaseCloudServices {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   final String _cardsCollectionName = 'cards_collection';
   final String _usersCollectionName = 'users';
   final String _tradesCollectionName = 'trades';
-
   final String _cardsField = 'cards';
   final String _friendsUsernames = 'friendsUsernames';
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 
   // CARDS COLLECTION METHODS
+
   Future<void> addPokemonCardToUser(String username, PokemonCard pokemonCard) async {
     try {
       var userDoc = await _firestore.collection(_cardsCollectionName).doc(username).get();
@@ -37,6 +39,7 @@ class FirebaseCloudServices {
     }
   }
 
+
   Future<List<PokemonCard>> getPokemonCardsByUsername(String username) async {
     try {
       var userDoc = await _firestore.collection(_cardsCollectionName).doc(username).get();
@@ -53,6 +56,7 @@ class FirebaseCloudServices {
     }
   }
 
+
   Stream<List<PokemonCard>> getStreamOfPokemonCardsByUsername(String username) {
     if(username.isEmpty) { return const Stream.empty(); }
     return _firestore.collection(_cardsCollectionName).doc(username).snapshots().map((snapshot) {
@@ -62,8 +66,68 @@ class FirebaseCloudServices {
   }
 
 
+  void _addCardsToUser(String username, List<PokemonCard> cards) async {
+    try {
+      CollectionReference collectionReference = _firestore.collection(_cardsCollectionName);
+      DocumentSnapshot documentSnapshot = await collectionReference.doc(username).get();
 
-  // USERS COLLECTION METHODS
+      if(documentSnapshot.exists) {
+        await collectionReference.doc(username).update({
+          _cardsField: FieldValue.arrayUnion(cards.map((card) => card.toJson()).toList()),
+        });
+      } else {
+        await collectionReference.doc(username).set({
+          _cardsField: cards.map((card) => card.toJson()).toList(),
+        });
+      }
+
+    } catch (e) {
+      print('Error adding cards to user: $e');
+    }
+  }
+
+
+  void _removeCardsFromUser(String username, List<PokemonCard> cards) async {
+    try {
+      CollectionReference collectionReference = _firestore.collection(_cardsCollectionName);
+      DocumentSnapshot documentSnapshot = await collectionReference.doc(username).get();
+
+      if(documentSnapshot.exists) {
+        await collectionReference.doc(username).update({
+          _cardsField: FieldValue.arrayRemove(cards.map((card) => card.toJson()).toList()),
+        });
+      } else {
+        await collectionReference.doc(username).set({
+          _cardsField: cards.map((card) => card.toJson()).toList(),
+        });
+      }
+
+    } catch (e) {
+      print('Error adding cards to user: $e');
+    }
+  }
+
+
+  Future<void> modifyCardsDocumentName(String oldDocumentName, String newDocumentName) async {
+    final CollectionReference collection = FirebaseFirestore.instance.collection(_cardsCollectionName);
+    try {
+      DocumentSnapshot oldDocumentSnapshot = await collection.doc(oldDocumentName).get();
+      var data = oldDocumentSnapshot.data();
+
+      if (data != null) {
+        await collection.doc(newDocumentName).set(data);
+        await collection.doc(oldDocumentName).delete();
+        return;
+
+      }
+    } catch (e) {
+      print('Error renaming document: $e');
+    }
+  }
+
+
+
+  // HANDLE HANDLE METHODS
 
   Future<void> addNewUserWithEmailAndUsername(String email, String username) async {
     try {
@@ -92,10 +156,12 @@ class FirebaseCloudServices {
     }
   }
 
+
   String _twoDigits(int n) {
     if (n >= 10) return "$n";
     return "0$n";
   }
+
 
   Future<String?> getUsernameUsingEmail(String userEmail) async {
     try {
@@ -116,6 +182,7 @@ class FirebaseCloudServices {
     }
   }
 
+
   Future<String?> getEmailUsingUsername(String username) async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
@@ -134,6 +201,7 @@ class FirebaseCloudServices {
       return null;
     }
   }
+
 
   Future<User?> getUserUsingUsername(String username) async {
     try {
@@ -162,6 +230,7 @@ class FirebaseCloudServices {
     }
   }
 
+
   Future<User?> getUserUsingEmail(String userEmail) async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
@@ -189,6 +258,134 @@ class FirebaseCloudServices {
     }
   }
 
+
+  Future<void> updateUserByUsername(String username, User newUser) async {
+    modifyCardsDocumentName(username, newUser.username);
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection(_usersCollectionName)
+          .where('username', isEqualTo: username)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot<Map<String, dynamic>> userDocument = querySnapshot.docs.first;
+        await _firestore
+            .collection(_usersCollectionName)
+            .doc(userDocument.id)
+            .update(newUser.toJson());
+      }
+      return;
+    } catch (e) {
+      print('Error modifying user: $e');
+    }
+  }
+
+
+  void updateUserFavouriteColor(String username, Color favouriteColor) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection(_usersCollectionName)
+          .where('username', isEqualTo: username)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot<Map<String, dynamic>> userDocument = querySnapshot.docs.first;
+        await _firestore
+            .collection(_usersCollectionName)
+            .doc(userDocument.id)
+            .update({'favouriteColor': '0x${favouriteColor.value.toRadixString(16).toUpperCase()}'});
+      }
+
+    } catch (e) {
+      print('Error retrieving user: $e');
+      return null;
+    }
+  }
+
+
+  Future<List<User>> getAllUserWithStringInUsername(String search) {
+    return _firestore.collection(_usersCollectionName).where('username', isEqualTo: search).get().then((querySnapshot) {
+      List<User> users = [];
+      for (var user in querySnapshot.docs) {
+        users.add(User(
+          username: user.get('username'),
+          email: user.get('email'),
+          realName: user.get('realName'),
+          profilePictureUrl: user.get('profilePictureUrl'),
+          bio: user.get('bio'),
+          favouriteColor: user.get('favouriteColor'),
+          friendsUsernames: List<String>.from(user.get('friendsUsernames')),
+          accountCreationDate: user.get('accountCreationDate'),
+        ));
+      }
+      return users;
+    });
+  }
+
+
+  // HANDLE USER FAVOURITES METHODS
+
+  Future<void> updateUserFavourites(String username, String pokemonName, bool toAdd, String favouriteType) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection(_usersCollectionName)
+          .where('username', isEqualTo: username)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot<Map<String, dynamic>> userDocument = querySnapshot.docs.first;
+        List<String> currentFavourites = List<String>.from(userDocument.get('favourites_$favouriteType'));
+
+        if(toAdd) { currentFavourites.add(pokemonName); }
+        else { currentFavourites.remove(pokemonName); }
+
+        _firestore
+            .collection(_usersCollectionName)
+            .doc(userDocument.id)
+            .update({'favourites_$favouriteType': currentFavourites});
+      }
+    } catch (e) {
+      print('Error updating user favourites: $e');
+    }
+  }
+
+  Future<List<String>> loadUserFavourites(String username, String favouriteType) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection(_usersCollectionName)
+          .where('username', isEqualTo: username)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) { return List<String>.from(querySnapshot.docs.first.get('favourites_$favouriteType')); }
+      else { return []; }
+
+    } catch (e) {
+      print('Error loading user favourites: $e');
+      return [];
+    }
+  }
+
+  Stream<List<String>> loadUserFavouritesStream(String username, String favouriteType) {
+    if (username.isEmpty) { return const Stream.empty(); }
+
+    return _firestore.collection(_usersCollectionName).where('username', isEqualTo: username).snapshots().map((snapshot) {
+      if (snapshot.docs.isNotEmpty) { return List<String>.from(snapshot.docs.first.get('favourites_$favouriteType') as List<String>); }
+      else { return []; }
+    });
+  }
+
+  Stream<List<PokemonCard>> getStreamOfPokemonCardsByUsername2(String username) {
+    if(username.isEmpty) { return const Stream.empty(); }
+    return _firestore.collection(_cardsCollectionName).doc(username).snapshots().map((snapshot) {
+      var cards = snapshot.data()?[_cardsField] as List<dynamic>? ?? [];
+      return cards.map((card) => PokemonCard.fromJson(card)).toList();
+    });
+  }
+
+
+
+  // HANDLE FRIENDS METHODS
+
   Future<List<User>> getUserFriendListFromUsername(String username) async {
     List<User> friendList = [];
     final friendUsernames = (await getUserUsingUsername(username))!.friendsUsernames;
@@ -200,6 +397,7 @@ class FirebaseCloudServices {
 
     return friendList;
   }
+
 
   void removeFriendOfUser(String username, String friendUsername) async {
     try {
@@ -222,6 +420,7 @@ class FirebaseCloudServices {
       print('Error removing friend from user: $e');
     }
   }
+
 
   Future<void> addFriendWithUsername(String userUsername, String friendUsername) async {
     // TODO Send Notification to new friend
@@ -250,6 +449,7 @@ class FirebaseCloudServices {
     }
   }
 
+
   Future<bool> isAlreadyFriend(String userUsername, String friendUsername) {
     return getUserFriendListFromUsername(userUsername).then((friendList) {
       for(var friend in friendList) { if(friend.username == friendUsername) { return true; } }
@@ -257,64 +457,9 @@ class FirebaseCloudServices {
     });
   }
 
-  Future<void> updateUserByUsername(String username, User newUser) async {
-    modifyCardsDocumentName(username, newUser.username);
-    try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
-          .collection(_usersCollectionName)
-          .where('username', isEqualTo: username)
-          .get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        DocumentSnapshot<Map<String, dynamic>> userDocument = querySnapshot.docs.first;
-        await _firestore
-            .collection(_usersCollectionName)
-            .doc(userDocument.id)
-            .update(newUser.toJson());
-      }
-      return;
-    } catch (e) {
-      print('Error modifying user: $e');
-    }
-  }
 
-  Future<void> modifyCardsDocumentName(String oldDocumentName, String newDocumentName) async {
-    final CollectionReference collection = FirebaseFirestore.instance.collection(_cardsCollectionName);
-    try {
-      DocumentSnapshot oldDocumentSnapshot = await collection.doc(oldDocumentName).get();
-      var data = oldDocumentSnapshot.data();
-
-      if (data != null) {
-        await collection.doc(newDocumentName).set(data);
-        await collection.doc(oldDocumentName).delete();
-        return;
-
-      }
-    } catch (e) {
-      print('Error renaming document: $e');
-    }
-  }
-
-  void updateUserFavouriteColor(String username, Color favouriteColor) async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
-          .collection(_usersCollectionName)
-          .where('username', isEqualTo: username)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        DocumentSnapshot<Map<String, dynamic>> userDocument = querySnapshot.docs.first;
-        await _firestore
-            .collection(_usersCollectionName)
-            .doc(userDocument.id)
-            .update({'favouriteColor': '0x${favouriteColor.value.toRadixString(16).toUpperCase().substring(2)}'});
-      }
-
-    } catch (e) {
-      print('Error retrieving user: $e');
-      return null;
-    }
-  }
+  // HANDLE TRADES METHODS
 
   Future<List<Trade>> getAllUserTrades(String username) {
     return Future.wait([getTradesSentByUsername(username), getTradesProposedToUsername(username)])
@@ -324,6 +469,7 @@ class FirebaseCloudServices {
           return allTrades;
     });
   }
+
 
   Future<List<Trade>> getTradesSentByUsername(String username) async {
     try {
@@ -343,6 +489,7 @@ class FirebaseCloudServices {
     }
   }
 
+
   Future<List<Trade>> getTradesProposedToUsername(String username) async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
@@ -361,6 +508,7 @@ class FirebaseCloudServices {
     }
   }
 
+
   void uploadNewTrade(Trade trade, List<PokemonCard> userPokemonCards, List<PokemonCard> friendPokemonCards) async {
     try {
       await _firestore.collection(_tradesCollectionName).add(trade.toJson());
@@ -369,6 +517,7 @@ class FirebaseCloudServices {
       print('Error uploading trade: $e');
     }
   }
+
 
   void addPokemonCardsToTrade(String tradeId, List<PokemonCard> userPokemonCards, List<PokemonCard> friendPokemonCards) async {
     try {
@@ -385,6 +534,7 @@ class FirebaseCloudServices {
       print('Error adding Pokemon cards to trade: $e');
     }
   }
+
 
   Future<bool> doesTradeBetweenUserAndFriendAlreadyExist(String userUsername, String friendUsername) async {
     try {
@@ -410,6 +560,7 @@ class FirebaseCloudServices {
     }
   }
 
+
   Future<List<Trade>> getAllTradesOfUser(String username) async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
@@ -432,6 +583,7 @@ class FirebaseCloudServices {
       return [];
     }
   }
+
 
   Future<void> updateTradeStatus(Trade trade, String newStatus, { String email = "", BuildContext? context }) async {
     try {
@@ -457,6 +609,7 @@ class FirebaseCloudServices {
     }
   }
 
+
   void _updateTradeStatusInCards(Trade trade) {
     _removeCardsFromUser(trade.senderUsername, trade.pokemonCardsOffered);
     _removeCardsFromUser(trade.receiverUsername, trade.pokemonCardsRequested);
@@ -465,45 +618,6 @@ class FirebaseCloudServices {
     _addCardsToUser(trade.receiverUsername, trade.pokemonCardsOffered);
   }
 
-  void _addCardsToUser(String username, List<PokemonCard> cards) async {
-    try {
-      CollectionReference collectionReference = _firestore.collection(_cardsCollectionName);
-      DocumentSnapshot documentSnapshot = await collectionReference.doc(username).get();
-
-      if(documentSnapshot.exists) {
-        await collectionReference.doc(username).update({
-          _cardsField: FieldValue.arrayUnion(cards.map((card) => card.toJson()).toList()),
-        });
-      } else {
-        await collectionReference.doc(username).set({
-          _cardsField: cards.map((card) => card.toJson()).toList(),
-        });
-      }
-
-    } catch (e) {
-      print('Error adding cards to user: $e');
-    }
-  }
-
-  void _removeCardsFromUser(String username, List<PokemonCard> cards) async {
-    try {
-      CollectionReference collectionReference = _firestore.collection(_cardsCollectionName);
-      DocumentSnapshot documentSnapshot = await collectionReference.doc(username).get();
-
-      if(documentSnapshot.exists) {
-        await collectionReference.doc(username).update({
-          _cardsField: FieldValue.arrayRemove(cards.map((card) => card.toJson()).toList()),
-        });
-      } else {
-        await collectionReference.doc(username).set({
-          _cardsField: cards.map((card) => card.toJson()).toList(),
-        });
-      }
-
-    } catch (e) {
-      print('Error adding cards to user: $e');
-    }
-  }
 
   Future<void> removeAllTradesWithUser(String userUsername, String friendUsername) async {
     try {
@@ -539,6 +653,7 @@ class FirebaseCloudServices {
     }
   }
 
+
   Future<int> getNumberOfTradesAmongTwoUsers(String userUsername, String friendUsername) {
     return Future.wait([getTradesSentByUsername(userUsername), getTradesProposedToUsername(userUsername)])
         .then((List<List<Trade>> trades) {
@@ -547,30 +662,12 @@ class FirebaseCloudServices {
     });
   }
 
+
   Future<void> deleteTrade(Trade trade) async {
     return _firestore.collection(_tradesCollectionName).where('tradeId', isEqualTo: trade.tradeId).get().then((querySnapshot) {
       if (querySnapshot.docs.isNotEmpty) {
         return querySnapshot.docs.first.reference.delete();
       }
-    });
-  }
-
-  Future<List<User>> getAllUserWithStringInUsername(String search) {
-    return _firestore.collection(_usersCollectionName).where('username', isEqualTo: search).get().then((querySnapshot) {
-      List<User> users = [];
-      for (var user in querySnapshot.docs) {
-        users.add(User(
-          username: user.get('username'),
-          email: user.get('email'),
-          realName: user.get('realName'),
-          profilePictureUrl: user.get('profilePictureUrl'),
-          bio: user.get('bio'),
-          favouriteColor: user.get('favouriteColor'),
-          friendsUsernames: List<String>.from(user.get('friendsUsernames')),
-          accountCreationDate: user.get('accountCreationDate'),
-        ));
-      }
-      return users;
     });
   }
 }

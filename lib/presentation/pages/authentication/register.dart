@@ -3,7 +3,6 @@ import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
 import 'package:pokedex_dima_new/presentation/widgets/auth_loading_bar.dart';
 import 'package:pokedex_dima_new/presentation/widgets/auth_button.dart';
 import 'package:pokedex_dima_new/presentation/widgets/auth_text_field.dart';
-import 'package:pokedex_dima_new/presentation/widgets/logo_square_tile.dart';
 
 class Register extends StatefulWidget {
 

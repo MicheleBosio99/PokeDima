@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/domain/firebase_cloud/user.dart';
 
-
-
 class FriendListTile extends StatelessWidget {
 
   final User friend;

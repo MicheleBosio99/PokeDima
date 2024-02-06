@@ -27,15 +27,6 @@ class VisualizeProfileImage extends StatelessWidget {
                 ),
                 onPressed: () { changeBodyWidget(UserProfile(changeBodyWidget: changeBodyWidget)); },
               ),
-              // const SizedBox(width: 10,),
-              // const Text(
-              //   'Go back to profile page',
-              //   style: TextStyle(
-              //     color: Colors.white,
-              //     fontSize: 18,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
             ],
           ),
 

@@ -22,7 +22,7 @@ void main() async {
           projectId: "pokedexdima-new",
         ))
       : await Firebase.initializeApp();
-  await FirebaseMessagesServices().initNotifications();
+  // await FirebaseMessagesServices().initNotifications();
   runApp(MyApp());
 }
 

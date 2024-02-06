@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
-
-
 class ModifyProfileFormField extends StatelessWidget {
 
-  final controller;
-  final hintText;
-  final obscureText;
+  final TextEditingController controller;
+  final String hintText;
+  final bool obscureText;
 
-  const ModifyProfileFormField({ required this.controller, required this.hintText, this.obscureText = false });
+  const ModifyProfileFormField({ super.key,  required this.controller, required this.hintText, this.obscureText = false });
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +36,14 @@ class ModifyProfileFormField extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(
+            borderSide: const BorderSide(
               color: Colors.red,
               width: 2,
             ),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(
+            borderSide: const BorderSide(
               color: Colors.red,
               width: 2,
             ),

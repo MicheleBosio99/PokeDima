@@ -317,7 +317,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   }
 
   String _getRarity() {
-    List<String> rarities = ["Common", "Uncommon", "Rare", "Very Rare", "Legendary"];
+    List<String> rarities = ["Common", "Uncommon", "Rare", "Ultra Rare", "Legendary"];
     return rarities[Random().nextInt(rarities.length)];
   }
 

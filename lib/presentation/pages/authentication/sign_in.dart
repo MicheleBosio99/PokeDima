@@ -169,7 +169,7 @@ class _SignInState extends State<SignIn> {
                     const SizedBox(width: 25),
                     LogoSquareTile(
                       imagePath: 'lib/images/logos/apple_logo.png',
-                      onTap: () async { await _auth.signInWithApple(); },
+                      onTap: () { },
                     ),
                   ],
                 ),

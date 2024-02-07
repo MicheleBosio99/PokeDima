@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_dima_new/domain/pokemon_type.dart';
-import 'package:pokedex_dima_new/presentation/widgets/type_box.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/type_box.dart';
 
 void main() {
   testWidgets('Type Boxes widgets render correctly', (WidgetTester tester) async {

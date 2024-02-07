@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/data/firebase_cloud_services/firebase_cloud_services.dart';
 import 'package:pokedex_dima_new/domain/firebase_cloud/user.dart';
 import 'package:pokedex_dima_new/domain/user.dart';
-import 'package:pokedex_dima_new/presentation/pages/friend_list_page.dart';
-import 'package:pokedex_dima_new/presentation/pages/friend_profile_page.dart';
-import 'package:pokedex_dima_new/presentation/widgets/auth_loading_bar.dart';
-import 'package:pokedex_dima_new/presentation/widgets/friend_list_tile.dart';
+import 'package:pokedex_dima_new/presentation/phone/pages/friend_list_page.dart';
+import 'package:pokedex_dima_new/presentation/phone/pages/friend_profile_page.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/auth_loading_bar.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/friend_list_tile.dart';
 import 'package:provider/provider.dart';
 
 class SearchFriend extends StatefulWidget {

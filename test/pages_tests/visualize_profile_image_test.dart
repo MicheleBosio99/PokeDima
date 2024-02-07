@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:network_image_mock/network_image_mock.dart';
-import 'package:pokedex_dima_new/presentation/pages/visualize_profile_image.dart';
+import 'package:pokedex_dima_new/presentation/phone/pages/visualize_profile_image.dart';
 
 void main() {
   group('VisualizeProfileImage', () {

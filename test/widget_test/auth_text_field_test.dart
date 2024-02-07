@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pokedex_dima_new/presentation/widgets/auth_text_field.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/auth_text_field.dart';
 
 void main() {
   testWidgets('AuthTextFormField renders correctly', (WidgetTester tester) async {

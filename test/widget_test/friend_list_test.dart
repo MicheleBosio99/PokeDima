@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:pokedex_dima_new/domain/firebase_cloud/user.dart';
-import 'package:pokedex_dima_new/presentation/widgets/friend_list_tile.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/friend_list_tile.dart';
 
 void main() {
   testWidgets('FriendListTile renders correctly', (WidgetTester tester) async {

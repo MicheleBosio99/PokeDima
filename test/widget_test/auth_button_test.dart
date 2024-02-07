@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pokedex_dima_new/presentation/widgets/auth_button.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/auth_button.dart';
 
 void main() {
 

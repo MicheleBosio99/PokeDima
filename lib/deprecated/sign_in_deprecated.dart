@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
 import 'package:pokedex_dima_new/deprecated/graphics_constants_deprecated.dart';
-import 'package:pokedex_dima_new/presentation/widgets/auth_loading_bar.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/auth_loading_bar.dart';
 
 class SignInDeprecated extends StatefulWidget {
   final Function toggleView;

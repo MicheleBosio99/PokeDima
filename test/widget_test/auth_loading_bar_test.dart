@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pokedex_dima_new/presentation/widgets/auth_loading_bar.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/auth_loading_bar.dart';
 
 void main() {
 

@@ -5,7 +5,7 @@ import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/domain/pokemon.dart';
 import 'package:pokedex_dima_new/domain/pokemon_card.dart';
 import 'package:pokedex_dima_new/domain/pokemon_type.dart';
-import 'package:pokedex_dima_new/presentation/widgets/pokemon_card_tile.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/pokemon_card_tile.dart';
 import 'package:provider/provider.dart';
 
 void main() {

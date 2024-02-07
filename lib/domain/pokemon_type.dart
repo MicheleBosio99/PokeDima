@@ -77,7 +77,7 @@ Color _getColorForType(String typeName) {
     "Fairy": const Color(0xFFF2B6CF), // Pastel Pink
   };
 
-  return typeColorMap[typeName] ?? Colors.grey;
+  return typeColorMap[typeName] ?? const Color(0xEEEEEEFF);
 }
 
 Color _getBackgroundColorForType(String typeName) {
@@ -102,6 +102,6 @@ Color _getBackgroundColorForType(String typeName) {
     "Fairy": const Color(0xFFFCDEEC), // Pastel Pink
   };
 
-  return typeColorMap[typeName] ?? Colors.grey;
+  return typeColorMap[typeName] ?? const Color(0xEEEEEEFF);
 }
 

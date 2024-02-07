@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:pokedex_dima_new/domain/pokemon.dart';
 import 'package:pokedex_dima_new/domain/pokemon_type.dart';
-import 'package:pokedex_dima_new/presentation/widgets/pokemon_tile.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/pokemon_tile.dart';
 
 void main() {
 

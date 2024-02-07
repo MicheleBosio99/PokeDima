@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_dima_new/domain/firebase_cloud/trade.dart';
 import 'package:pokedex_dima_new/domain/firebase_cloud/user.dart';
-import 'package:pokedex_dima_new/presentation/widgets/trade_tile.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/trade_tile.dart';
 
 void main() {
   testWidgets('TradeTile renders correctly', (WidgetTester tester) async {

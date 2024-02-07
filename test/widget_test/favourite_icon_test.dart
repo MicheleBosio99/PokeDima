@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokedex_dima_new/application/providers/username_provider.dart';
-import 'package:pokedex_dima_new/presentation/widgets/favourite_icon.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/favourite_icon.dart';
 import 'package:pokedex_dima_new/data/firebase_cloud_services/firebase_cloud_services.dart';
 import 'package:pokedex_dima_new/domain/pokemon.dart';
 import 'package:pokedex_dima_new/domain/pokemon_type.dart';
@@ -36,9 +36,10 @@ void main() {
   testWidgets('FavouriteIcon toggles correctly', (WidgetTester tester) async {
 
     final mockFirebaseCloudServices = MockFirebaseCloudServices();
-    when(mockFirebaseCloudServices.saveUserFavourites(
-        ["Bulbasaur"],
+    when(mockFirebaseCloudServices.updateUserFavourites(
         "user1test",
+        "Bulbasaur",
+        true,
         "pokemon")
     ).thenAnswer((_) async => true);
     when(mockFirebaseCloudServices.loadUserFavourites(

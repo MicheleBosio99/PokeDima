@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:pokedex_dima_new/domain/pokemon_card.dart';
-import 'package:pokedex_dima_new/presentation/widgets/single_card_show.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/single_card_show.dart';
 
 void main() {
   testWidgets('SingleCardShowImage renders correctly', (WidgetTester tester) async {

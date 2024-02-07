@@ -5,9 +5,9 @@ import 'package:pokedex_dima_new/application/providers/pokemon_cards_provider.da
 import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
 import 'package:pokedex_dima_new/application/providers/username_provider.dart';
-import 'package:pokedex_dima_new/data/firebase_messages_services/firebase_messages_services.dart';
 import 'package:pokedex_dima_new/domain/user.dart';
-import 'package:pokedex_dima_new/presentation/pages/home_page_wrapper.dart';
+import 'package:pokedex_dima_new/presentation/phone/pages/home_page_wrapper.dart';
+import 'package:pokedex_dima_new/presentation/tablet/pages/home_page_wrapper_tablet.dart';
 import 'package:provider/provider.dart';
 
 
@@ -22,7 +22,6 @@ void main() async {
           projectId: "pokedexdima-new",
         ))
       : await Firebase.initializeApp();
-  // await FirebaseMessagesServices().initNotifications();
   runApp(MyApp());
 }
 
@@ -41,15 +40,36 @@ class MyApp extends StatelessWidget {
           catchError: (_, __) => null,
         ),
       ],
-      child: Builder(
-        builder: (context) {
-          return MaterialApp(
-            title: 'PokeDima',
-            debugShowCheckedModeBanner: false,
-            home: HomePageWrapper(),
-          );
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 600) { return buildPhone(context); }
+          else { return buildTablet(context); }
         },
       ),
+    );
+  }
+
+  Widget buildPhone(BuildContext context) {
+    return Builder(
+      builder: (context) {
+        return const MaterialApp(
+          title: 'PokeDima',
+          debugShowCheckedModeBanner: false,
+          home: HomePageWrapper(),
+        );
+      },
+    );
+  }
+
+  Widget buildTablet(BuildContext context) {
+    return Builder(
+      builder: (context) {
+        return const MaterialApp(
+          title: 'PokeDima',
+          debugShowCheckedModeBanner: false,
+          home: HomePageWrapperTablet(),
+        );
+      },
     );
   }
 }

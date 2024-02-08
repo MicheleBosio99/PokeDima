@@ -1,6 +1,7 @@
 
 
-class FilterPokemon {
+class PokemonFilters {
+
 
 
 

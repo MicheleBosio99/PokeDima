@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-// import 'package:pokedex_dima_new/domain/pokemon_filters.dart';
+import 'package:pokedex_dima_new/domain/filter_pokemon.dart';
 
 
 class FavouriteSwitch extends StatefulWidget {
 
-  // final PokemonFilters pokemonFilters;
-  // const FavouriteSwitch({ super.key, required this.pokemonFilters });
+  final PokemonFilters pokemonFilters;
+  const FavouriteSwitch({ super.key, required this.pokemonFilters });
 
   @override
   _FavouriteSwitchState createState() => _FavouriteSwitchState();

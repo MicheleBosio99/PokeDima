@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:pokedex_dima_new/application/auth_services/auth_service.dart';
 import 'package:pokedex_dima_new/images/icons/poke_dima_icons.dart';
 import 'package:pokedex_dima_new/presentation/phone/pages/scanner_page.dart';
-import 'package:pokedex_dima_new/presentation/phone/pages/pokemon_cards_list_page.dart';
-import 'package:pokedex_dima_new/presentation/phone/pages/pokemon_grid_page.dart';
 import 'package:pokedex_dima_new/presentation/phone/pages/user_profile_page.dart';
-import 'package:pokedex_dima_new/presentation/phone/widgets/menu_drawer.dart';
+import 'package:pokedex_dima_new/presentation/tablet/pages/pokemon_cards_list_page_tablet.dart';
+import 'package:pokedex_dima_new/presentation/tablet/pages/pokemon_grid_page_tablet.dart';
+import 'package:pokedex_dima_new/presentation/tablet/pages/user_profile_page_tablet.dart';
 
 class HomePageTablet extends StatefulWidget {
 
@@ -18,7 +16,7 @@ class HomePageTablet extends StatefulWidget {
 }
 
 class _HomePageTabletState extends State<HomePageTablet> {
-  int _currentIndex = 1;
+  int? _currentIndex = 1;
   late Widget bodyWidget;
   late Widget cardsCollectionPage;
   late Widget pokemonGridPage;
@@ -27,34 +25,37 @@ class _HomePageTabletState extends State<HomePageTablet> {
 
   final List<Widget> _pages = [];
 
+  bool _useIndicator = true;
+
   @override
   void initState() {
     super.initState();
 
-    cardsCollectionPage = PokemonCardsList(changeBodyWidget: changeBodyWidget);
-    pokemonGridPage = PokemonGrid(changeBodyWidget: changeBodyWidget);
+    cardsCollectionPage = PokemonCardsListTablet(changeBodyWidget: changeBodyWidget);
+    pokemonGridPage = PokemonGridTablet(changeBodyWidget: changeBodyWidget);
     scannerPage = Scanner(changeBodyWidget: changeBodyWidget);
-    userProfilePage = UserProfile(changeBodyWidget: changeBodyWidget);
+    userProfilePage = UserProfileTablet(changeBodyWidget: changeBodyWidget);
 
     _pages.add(cardsCollectionPage);
     _pages.add(pokemonGridPage);
     _pages.add(scannerPage);
     _pages.add(userProfilePage);
 
-    bodyWidget = _pages[_currentIndex];
+    bodyWidget = _pages[_currentIndex!];
   }
 
   void changeBodyWidget(Widget newWidget, {int index = -1}) {
     setState(() {
       bodyWidget = index != -1 ? _pages[index] : newWidget;
-      _currentIndex = index;
+      if(index != -1) { _currentIndex = index; }
+      else { _currentIndex = null; }
     });
   }
 
   void _bottomBarNavigateTo(int index) {
     setState(() {
       _currentIndex = index;
-      bodyWidget = _pages[_currentIndex];
+      bodyWidget = _pages[_currentIndex!];
     } );
   }
 
@@ -64,12 +65,15 @@ class _HomePageTabletState extends State<HomePageTablet> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xFF111318),
-        title: const Text(
-          "P O K E D I M A",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+        title: const Padding(
+          padding: EdgeInsets.only(left: 64),
+          child: Text(
+            "P O K E D I M A",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         leading: Column(
@@ -105,11 +109,14 @@ class _HomePageTabletState extends State<HomePageTablet> {
 
             onDestinationSelected: (int index) {
               setState(() {
-                _currentIndex = index;
-                _bottomBarNavigateTo(_currentIndex);
+                if(index != -1) {
+                  _currentIndex = index;
+                  _bottomBarNavigateTo(_currentIndex!);
+                }
               });
             },
 
+            useIndicator: _useIndicator,
             backgroundColor: const Color(0xFF111318),
             indicatorColor: const Color(0xFF111318),
             indicatorShape: RoundedRectangleBorder(

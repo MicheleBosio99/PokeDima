@@ -9,17 +9,17 @@ import 'package:pokedex_dima_new/presentation/phone/pages/user_profile_page.dart
 import 'package:pokedex_dima_new/presentation/phone/widgets/modify_info_text_field.dart';
 
 
-class ModifyProfile extends StatefulWidget {
+class ModifyProfileTablet extends StatefulWidget {
 
   final User user;
   final Function changeBodyWidget;
-  const ModifyProfile({ required this.user, required this.changeBodyWidget });
+  const ModifyProfileTablet({ required this.user, required this.changeBodyWidget });
 
   @override
-  State<ModifyProfile> createState() => _ModifyProfileState();
+  State<ModifyProfileTablet> createState() => _ModifyProfileTabletState();
 }
 
-class _ModifyProfileState extends State<ModifyProfile> {
+class _ModifyProfileTabletState extends State<ModifyProfileTablet> {
   final GlobalKey<FormState> _modifiesKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _realNameController = TextEditingController();
@@ -39,163 +39,165 @@ class _ModifyProfileState extends State<ModifyProfile> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 30,),
+        child: Container(
+          width: 500,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // const SizedBox(height: 30,),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const SizedBox(width: 15,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(width: 40,),
 
-                IconButton(
-                  onPressed: () { widget.changeBodyWidget(UserProfile(changeBodyWidget: widget.changeBodyWidget), index: 3); },
-                  icon: Icon(
-                    Icons.arrow_back_sharp,
-                    size: 32,
-                    color: Colors.grey[800],
-                  ),
-                ),
-                
-                const SizedBox(width: 20,),
-                
-                Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Modify your profile:",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 26,
+                  IconButton(
+                    onPressed: () { widget.changeBodyWidget(UserProfile(changeBodyWidget: widget.changeBodyWidget), index: 3); },
+                    icon: Icon(
+                      Icons.arrow_back_sharp,
+                      size: 32,
                       color: Colors.grey[800],
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-              ],
-            ),
 
-            Divider(
-              color: Colors.grey[800],
-              thickness: 2,
-              indent: 50,
-              endIndent: 50,
-            ),
+                  const SizedBox(width: 55,),
 
-            const SizedBox(height: 10,),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
-              child: Row(
-                children: [
                   Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.transparent,
-                      border: Border.all(
-                        color: Colors.grey[800]!,
-                        width: 3,
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Modify your profile:",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 26,
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () { _pickImage(); },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        shadowColor: Colors.transparent,
-                        padding: const EdgeInsets.all(0),
-                      ),
-                      child: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: _selectedImage != null ? Image.file(_selectedImage!).image : NetworkImage(widget.user.profilePictureUrl),
-                        radius: 60,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(width: 30,),
-
-                  Text(
-                    "Change your\nprofile picture.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
-            ),
 
-            const SizedBox(height: 10,),
+              const SizedBox(height: 10,),
 
-            Form(
-              key: _modifiesKey,
-              child: Column(
-                children: [
-                  // ModifyProfileFormField(
-                  //   controller: _usernameController,
-                  //   hintText: "Username: ${widget.user.username}",
-                  // ),
-
-                  ModifyProfileFormField(
-                    controller: _realNameController,
-                    hintText: "Real Name: ${widget.user.realName}",
-                    obscureText: true,
-                  ),
-
-                  ModifyProfileFormField(
-                    controller: _biographyController,
-                    hintText: "Bio: ${widget.user.bio}",
-                  ),
-                ],
+              Divider(
+                color: Colors.grey[800],
+                thickness: 2,
+                indent: 50,
+                endIndent: 50,
               ),
-            ),
 
-            const SizedBox(height: 10,),
+              const SizedBox(height: 30,),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
-              child: TextButton(
-                onPressed: () async {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      duration: const Duration(seconds: 2),
-                      content: Center(
-                        child: Text(
-                          "User info successfully updated",
-                          style: TextStyle(
-                            color: Colors.grey[200],
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
+                child: Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.transparent,
+                        border: Border.all(
+                          color: Colors.grey[800]!,
+                          width: 3,
+                        ),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () { _pickImage(); },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
+                          padding: const EdgeInsets.all(0),
+                        ),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          backgroundImage: _selectedImage != null ? Image.file(_selectedImage!).image : NetworkImage(widget.user.profilePictureUrl),
+                          radius: 60,
                         ),
                       ),
                     ),
-                  );
-                  await _applyChanges(widget.user);
-                  widget.changeBodyWidget(UserProfile(changeBodyWidget: widget.changeBodyWidget), index: 3);
-                  },
-                child: Container(
-                  height: 64,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.red[800],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Text(
-                    "Apply changes",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+
+                    const SizedBox(width: 80,),
+
+                    Text(
+                      "Change your\nprofile picture.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 30,),
+
+              Form(
+                key: _modifiesKey,
+                child: Column(
+                  children: [
+                    ModifyProfileFormField(
+                      controller: _realNameController,
+                      hintText: "Real Name: ${widget.user.realName}",
+                      obscureText: true,
+                    ),
+
+                    const SizedBox(height: 10,),
+
+                    ModifyProfileFormField(
+                      controller: _biographyController,
+                      hintText: "Bio: ${widget.user.bio}",
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 30,),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
+                child: TextButton(
+                  onPressed: () async {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        duration: const Duration(seconds: 2),
+                        content: Center(
+                          child: Text(
+                            "User info successfully updated",
+                            style: TextStyle(
+                              color: Colors.grey[200],
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                    await _applyChanges(widget.user);
+                    widget.changeBodyWidget(UserProfile(changeBodyWidget: widget.changeBodyWidget), index: 3);
+                    },
+                  child: Container(
+                    height: 64,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.red[800],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      "Apply changes",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

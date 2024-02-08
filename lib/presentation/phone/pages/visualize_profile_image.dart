@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/presentation/phone/pages/user_profile_page.dart';
+import 'package:pokedex_dima_new/presentation/tablet/pages/user_profile_page_tablet.dart';
 
 
 class VisualizeProfileImage extends StatelessWidget {
 
   final String imageUrl;
+  final bool isTablet;
   final Function changeBodyWidget;
-  const VisualizeProfileImage({ super.key, required this.imageUrl, required this.changeBodyWidget });
+  const VisualizeProfileImage({ super.key, required this.imageUrl, required this.changeBodyWidget, this.isTablet = false });
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,13 @@ class VisualizeProfileImage extends StatelessWidget {
                   size: 32,
                   color: Colors.white,
                 ),
-                onPressed: () { changeBodyWidget(UserProfile(changeBodyWidget: changeBodyWidget)); },
+                onPressed: () {
+                  if(!isTablet) {
+                    changeBodyWidget(UserProfile(changeBodyWidget: changeBodyWidget));
+                  } else {
+                    changeBodyWidget(UserProfileTablet(changeBodyWidget: changeBodyWidget));
+                  }
+                },
               ),
             ],
           ),
@@ -35,12 +43,7 @@ class VisualizeProfileImage extends StatelessWidget {
           Center(
             child: Align(
               alignment: Alignment.center,
-              child: Image.network(
-                imageUrl,
-                width: 800,
-                scale: 0.8
-                // fit: BoxFit.cover,
-              ),
+              child: Image.network(imageUrl,),
             ),
           ),
         ],

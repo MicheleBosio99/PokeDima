@@ -37,8 +37,8 @@ class VisualizeProfileImage extends StatelessWidget {
               alignment: Alignment.center,
               child: Image.network(
                 imageUrl,
-                width: 800,
-                scale: 0.8
+                scale: 0.8,
+                // scale: 0.8
                 // fit: BoxFit.cover,
               ),
             ),

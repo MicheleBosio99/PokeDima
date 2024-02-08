@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
               GButton(
                 icon: PokeDima.personal,
                 iconSize: 30,
-                text: 'Social',
+                text: 'Profile',
               ),
             ],
             selectedIndex: _currentIndex,

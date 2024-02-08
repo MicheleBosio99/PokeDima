@@ -13,9 +13,7 @@ class AuthenticateTablet extends StatefulWidget {
 class _AuthenticateTabletState extends State<AuthenticateTablet> {
 
   bool showSignIn = true;
-  void toggleView() {
-    setState(() => showSignIn = !showSignIn);
-  }
+  void toggleView() { setState(() => showSignIn = !showSignIn); }
 
   @override
   Widget build(BuildContext context) {

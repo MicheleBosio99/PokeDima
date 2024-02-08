@@ -7,7 +7,7 @@ import 'package:pokedex_dima_new/presentation/phone/widgets/auth_text_field.dart
 class RegisterTablet extends StatefulWidget {
 
   final Function toggleView;
-  RegisterTablet({required this.toggleView});
+  const RegisterTablet({ super.key, required this.toggleView });
 
   @override
   _RegisterTabletState createState() => _RegisterTabletState();

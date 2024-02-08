@@ -36,68 +36,23 @@ class _PokemonGridState extends State<PokemonGrid> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                
+
                 IconButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      elevation: 450,
-                      context: context,
-                      builder: (context) {
-                        var allTypes = getAllPokemonTypes();
-                        return StatefulBuilder(
-                          builder: (BuildContext context, StateSetter setState) {
-                            return Container(
-                              height: 450,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 20,),
-                                    Center(
-                                      child: Text(
-                                        "FILTERS",
-                                        style: TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey[800],
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 40,),
-                                    Text(
-                                      "Filter by type:",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[800],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10,),
-
-                                    SingleChildScrollView(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: _getTypesBoxes(setState),
-                                      ),
-                                    ),
-
-
-                                    // TODO APPLY BUTTON
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.filter_list),
+                  padding: EdgeInsets.zero,
+                  onPressed: isFiltered ?  () {
+                    setState(() {
+                      pokemons = pokemonsFullList;
+                      isFiltered = false;
+                      searchController.clear();
+                    });
+                  } : null,
+                  icon: const Icon(Icons.close),
                   iconSize: 30,
-                  color: Colors.grey[800],
+                  color: isFiltered ? Colors.red[800] : Colors.grey[400],
                 ),
 
-                SizedBox(width: isFiltered ? 0 : 20,),
+                SizedBox(width: 20,),
 
                 Container(
                   width: 180,
@@ -122,22 +77,7 @@ class _PokemonGridState extends State<PokemonGrid> {
                   ),
                 ),
 
-                SizedBox(width: isFiltered ? 0 : 20,),
-
-                if(isFiltered)
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      setState(() {
-                        pokemons = pokemonsFullList;
-                        isFiltered = false;
-                        searchController.clear();
-                      });
-                    },
-                    icon: const Icon(Icons.close),
-                    iconSize: 30,
-                    color: Colors.red[800],
-                  ),
+                SizedBox(width: 20,),
 
                 IconButton(
                   onPressed: () {

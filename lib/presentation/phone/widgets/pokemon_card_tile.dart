@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/domain/pokemon.dart';
 import 'package:pokedex_dima_new/domain/pokemon_card.dart';
-import 'package:pokedex_dima_new/presentation/phone/pages/pokemon_card_info_page.dart';
+import 'package:pokedex_dima_new/presentation/phone/widgets/favourite_icon.dart';
 import 'package:pokedex_dima_new/presentation/phone/widgets/single_card_show.dart';
 import 'package:pokedex_dima_new/presentation/phone/widgets/type_box.dart';
 import 'package:provider/provider.dart';
@@ -34,10 +34,10 @@ class _PokemonCardTileState extends State<PokemonCardTile> {
 
     return GestureDetector(
       onTap: () {
-        widget.changeBodyWidget(PokemonCardInfoPage(
-          pokemonCard: widget.pokemonCard,
-          changeBodyWidget: widget.changeBodyWidget,
-        ));
+        // widget.changeBodyWidget(PokemonCardInfoPage(
+        //   pokemonCard: widget.pokemonCard,
+        //   changeBodyWidget: widget.changeBodyWidget,
+        // ));
       },
       onLongPress: () {
         toggleSelected();
@@ -49,16 +49,26 @@ class _PokemonCardTileState extends State<PokemonCardTile> {
             widget.onLongPressAdd == null ?
             Padding(
               padding: const EdgeInsets.only(top: 15, bottom: 0, left: 15, right: 15),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: relativePokemon.pokemonTypes[0].backgroundColor,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.grey[800]!,
-                    width: 4,
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: relativePokemon.pokemonTypes[0].backgroundColor,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.grey[800]!,
+                        width: 4,
+                      ),
+                    ),
+                    child: _getCardTile(relativePokemon),
                   ),
-                ),
-                child: _getCardTile(relativePokemon),
+
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: FavouriteIcon(pokemonName: widget.pokemonCard.pokemonName, favouriteType: "cards"),
+                  ),
+                ],
               ),
             )
             :
@@ -103,7 +113,6 @@ class _PokemonCardTileState extends State<PokemonCardTile> {
         children: [
           SingleCardShowImage(card: widget.pokemonCard, changeBodyWidget: widget.changeBodyWidget, width: 140, height: 180,),
 
-          // const SizedBox(width: 10),
 
           Padding(
             padding: const EdgeInsets.only(right: 10),

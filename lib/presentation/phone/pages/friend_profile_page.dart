@@ -5,13 +5,15 @@ import 'package:pokedex_dima_new/images/icons/poke_dima_icons.dart';
 import 'package:pokedex_dima_new/presentation/phone/pages/friend_card_collection.dart';
 import 'package:pokedex_dima_new/presentation/phone/pages/friend_list_page.dart';
 import 'package:pokedex_dima_new/presentation/phone/widgets/auth_loading_bar.dart';
+import 'package:pokedex_dima_new/presentation/tablet/pages/user_profile_page_tablet.dart';
 
 class FriendProfile extends StatefulWidget {
 
   final String username;
   final User friend;
+  final bool isTablet;
   final Function changeBodyWidget;
-  const FriendProfile({ required this.changeBodyWidget, required this.friend, required this.username });
+  const FriendProfile({ required this.changeBodyWidget, required this.friend, required this.username, this.isTablet = false });
 
   @override
   State<FriendProfile> createState() => _FriendProfileState();
@@ -105,7 +107,12 @@ class _FriendProfileState extends State<FriendProfile> {
                           size: 32,
                         ),
                         onPressed: () {
-                          widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1);
+                          if(!widget.isTablet) {
+                            widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1);
+                          }
+                          else {
+                            widget.changeBodyWidget(UserProfileTablet(changeBodyWidget: widget.changeBodyWidget), index: 3);
+                          }
                         },
                       ),
                     ),

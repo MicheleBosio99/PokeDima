@@ -22,6 +22,7 @@ Widget verticalTypeBoxes(List<PokemonType> types, {double distance = 0.0}) {
   return types.length == 1 ? Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 20),
             typeBox(types[0]),
           ],
         )

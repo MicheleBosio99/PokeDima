@@ -52,9 +52,7 @@ class _FriendCardsCollectionState extends State<FriendCardsCollection> {
             return Stack(
               children: [
                 Column(children: [
-                  const SizedBox(height: 50),
-
-                  // TODO: add search bar
+                  const SizedBox(height: 60),
 
                   if(friendCards.isNotEmpty)
                     Expanded(
@@ -106,7 +104,7 @@ class _FriendCardsCollectionState extends State<FriendCardsCollection> {
 
 
                 Positioned(
-                  top: -15,
+                  top: -10,
                   left: -15,
                   child: Padding(
                     padding: const EdgeInsets.only(
@@ -141,7 +139,7 @@ class _FriendCardsCollectionState extends State<FriendCardsCollection> {
                   ),
                 ),
                 Positioned(
-                  top: -15,
+                  top: -10,
                   right: -15,
                   child: Padding(
                     padding: const EdgeInsets.only(

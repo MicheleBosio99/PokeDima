@@ -568,7 +568,7 @@ class FirebaseCloudServices {
           .where('senderUsername', isEqualTo: username)
           .get();
       List<Trade> trades = [];
-      for (var trade in querySnapshot.docs) {trades.add(Trade.fromJson(trade.data()));}
+      for (var trade in querySnapshot.docs) { trades.add(Trade.fromJson(trade.data())); }
 
       querySnapshot = await _firestore
           .collection(_tradesCollectionName)
@@ -668,6 +668,20 @@ class FirebaseCloudServices {
       if (querySnapshot.docs.isNotEmpty) {
         return querySnapshot.docs.first.reference.delete();
       }
+    });
+  }
+
+  Stream<List<Trade>> getStreamOfTradesByUsername(String username) {
+    if(username.isEmpty) { return const Stream.empty(); }
+    return _firestore.collection(_tradesCollectionName).snapshots().map((snapshot) {
+      List<Trade> trades = [];
+      for (var trade in snapshot.docs) {
+        if(trade.get('senderUsername') == username || trade.get('receiverUsername') == username) {
+          trades.add(Trade.fromJson(trade.data()));
+        }
+      }
+      trades.sort((a, b) => DateTime.parse(b.timestamp).compareTo(DateTime.parse(a.timestamp)));
+      return trades;
     });
   }
 }

@@ -19,9 +19,8 @@ class HomePageWrapperTablet extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<UserAuthInfo?>(context);
 
-    if (user == null) {
-      return AuthenticateTablet();
-    } else {
+    if (user == null) { return AuthenticateTablet(); }
+    else {
       _loadPokemonData(context, user.email);
       return HomePageTablet();
     }

@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/domain/pokemon.dart';
 import 'package:pokedex_dima_new/presentation/phone/pages/pokemon_info_page.dart';
 import 'package:pokedex_dima_new/presentation/phone/widgets/type_box.dart';
+import 'package:pokedex_dima_new/presentation/tablet/pages/pokemon_carousel_info_page_tablet.dart';
 
 class PokemonTile extends StatelessWidget {
 
   final Pokemon pokemon;
+  final isTablet;
   final Function changeBodyWidget;
-  const PokemonTile({ required this.pokemon, required this.changeBodyWidget });
+  const PokemonTile({ required this.pokemon, required this.changeBodyWidget, this.isTablet = false });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () { changeBodyWidget(PokemonInfoPage(pokemon: pokemon, changeBodyWidget: changeBodyWidget,)); },
+      onTap: () {
+        if (!isTablet) { changeBodyWidget(PokemonInfoPage(pokemon: pokemon, changeBodyWidget: changeBodyWidget)); }
+        else { changeBodyWidget(PokemonCarouselInfoPageTablet(pokemonName: pokemon.name, changeBodyWidget: changeBodyWidget)); }
+      },
       child: Padding(
         padding: const EdgeInsets.all(6.0),
         child: Card(

@@ -14,7 +14,7 @@ import 'package:pokedex_dima_new/data/firebase_storage_services/firebase_storage
 import 'package:pokedex_dima_new/domain/pokemon.dart';
 import 'package:pokedex_dima_new/domain/pokemon_card.dart';
 import 'package:pokedex_dima_new/domain/user.dart';
-import 'package:pokedex_dima_new/presentation/phone/pages/pokemon_card_info_page.dart';
+import 'package:pokedex_dima_new/presentation/phone/pages/pokemon_cards_list_page.dart';
 import 'package:provider/provider.dart';
 
 
@@ -236,7 +236,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
 
       try {
         final cardAlreadyPresent = cardsProvider.getPokemonCardByPokemonName(_recognizedPokemon.name);
-        widget.changeBodyWidget(PokemonCardInfoPage(pokemonCard: cardAlreadyPresent, changeBodyWidget: widget.changeBodyWidget,));
+        widget.changeBodyWidget(PokemonCardsList(changeBodyWidget: widget.changeBodyWidget,));
         return;
       } on StateError { ""; }
 
@@ -260,7 +260,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
 
         await cloudServices.addPokemonCardToUser(username, newPokemonCard);
 
-        widget.changeBodyWidget(PokemonCardInfoPage(pokemonCard: newPokemonCard, changeBodyWidget: widget.changeBodyWidget,));
+        widget.changeBodyWidget(PokemonCardsList(changeBodyWidget: widget.changeBodyWidget,));
       });
     } on PokemonNotFoundException {
       ScaffoldMessenger.of(context).showSnackBar(

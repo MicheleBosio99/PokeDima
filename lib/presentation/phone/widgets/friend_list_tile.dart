@@ -14,6 +14,10 @@ class FriendListTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Color(int.parse(friend.favouriteColor)),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.grey[800]!,
+          width: 2,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),

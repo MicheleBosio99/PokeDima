@@ -6,16 +6,16 @@ import 'package:pokedex_dima_new/presentation/phone/widgets/auth_loading_bar.dar
 import 'package:pokedex_dima_new/presentation/phone/widgets/pokemon_card_tile.dart';
 import 'package:provider/provider.dart';
 
-class PokemonCardsList extends StatefulWidget {
+class PokemonCardsListTablet extends StatefulWidget {
 
   final Function changeBodyWidget;
-  const PokemonCardsList({ super.key, required this.changeBodyWidget });
+  const PokemonCardsListTablet({ super.key, required this.changeBodyWidget });
 
   @override
-  State<PokemonCardsList> createState() => _PokemonCardsListState();
+  State<PokemonCardsListTablet> createState() => _PokemonCardsListTabletState();
 }
 
-class _PokemonCardsListState extends State<PokemonCardsList> {
+class _PokemonCardsListTabletState extends State<PokemonCardsListTablet> {
   List<PokemonCard>? pokemonCards;
   final TextEditingController searchController = TextEditingController();
   bool isFiltered = false;
@@ -148,8 +148,8 @@ class _PokemonCardsListState extends State<PokemonCardsList> {
                 Divider(
                   color: Colors.grey[800],
                   thickness: 2,
-                  indent: 50,
-                  endIndent: 50,
+                  indent: 450,
+                  endIndent: 450,
                   height: 5,
                 ),
 
@@ -157,14 +157,19 @@ class _PokemonCardsListState extends State<PokemonCardsList> {
 
                 if((pokemonCards ?? pokemonCardsFullList).isNotEmpty)
                   Expanded(
-                    child: ListView(
-                      children: (pokemonCards ?? pokemonCardsFullList).map(
-                              (pokemonCard) =>
-                              PokemonCardTile(
-                                pokemonCard: pokemonCard,
-                                changeBodyWidget: widget.changeBodyWidget,
-                              )
-                      ).toList(),
+                    child: GridView.builder(
+                      itemCount: (pokemonCards ?? pokemonCardsFullList).length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 1.5,
+                      ),
+                      itemBuilder: (context, index) {
+                        final pokemonCard = (pokemonCards ?? pokemonCardsFullList)[index];
+                        return PokemonCardTile(
+                          pokemonCard: pokemonCard,
+                          changeBodyWidget: widget.changeBodyWidget,
+                        );
+                      },
                     ),
                   ),
 

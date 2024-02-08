@@ -6,16 +6,16 @@ import 'package:pokedex_dima_new/presentation/phone/widgets/pokemon_tile.dart';
 import 'package:pokedex_dima_new/presentation/phone/widgets/type_box.dart';
 import 'package:provider/provider.dart';
 
-class PokemonGrid extends StatefulWidget {
+class PokemonGridTablet extends StatefulWidget {
 
   final Function changeBodyWidget;
-  const PokemonGrid({ super.key, required this.changeBodyWidget });
+  const PokemonGridTablet({ super.key, required this.changeBodyWidget });
 
   @override
-  State<PokemonGrid> createState() => _PokemonGridState();
+  State<PokemonGridTablet> createState() => _PokemonGridTabletState();
 }
 
-class _PokemonGridState extends State<PokemonGrid> {
+class _PokemonGridTabletState extends State<PokemonGridTablet> {
 
   List<Pokemon>? pokemons;
   final TextEditingController searchController = TextEditingController();
@@ -45,7 +45,7 @@ class _PokemonGridState extends State<PokemonGrid> {
                         var allTypes = getAllPokemonTypes();
                         return StatefulBuilder(
                           builder: (BuildContext context, StateSetter setState) {
-                            return Container(
+                            return SizedBox(
                               height: 450,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -97,7 +97,7 @@ class _PokemonGridState extends State<PokemonGrid> {
                   color: Colors.grey[800],
                 ),
 
-                SizedBox(width: isFiltered ? 0 : 20,),
+                const SizedBox(width: 20,),
 
                 Container(
                   width: 180,
@@ -122,7 +122,7 @@ class _PokemonGridState extends State<PokemonGrid> {
                   ),
                 ),
 
-                SizedBox(width: isFiltered ? 0 : 20,),
+                const SizedBox(width: 20,),
 
                 if(isFiltered)
                   IconButton(
@@ -158,8 +158,8 @@ class _PokemonGridState extends State<PokemonGrid> {
           Divider(
             color: Colors.grey[800],
             thickness: 2,
-            indent: 50,
-            endIndent: 50,
+            indent: 450,
+            endIndent: 450,
             height: 5,
           ),
 
@@ -171,11 +171,11 @@ class _PokemonGridState extends State<PokemonGrid> {
                 itemCount: pokemons!.length,
                 shrinkWrap: true,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: 6,
                 ),
                 itemBuilder: (context, index) {
                   final pokemon = pokemons![index];
-                  return PokemonTile(pokemon: pokemon, changeBodyWidget: widget.changeBodyWidget);
+                  return PokemonTile(pokemon: pokemon, isTablet: true, changeBodyWidget: widget.changeBodyWidget);
                 },
               ),
             ),

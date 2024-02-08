@@ -10,7 +10,8 @@ class TradesListPage extends StatefulWidget {
 
   final User user;
   final Function changeBodyWidget;
-  const TradesListPage({ super.key, required this.user, required this.changeBodyWidget });
+  final bool isTablet;
+  const TradesListPage({ super.key, required this.user, required this.changeBodyWidget, this.isTablet = false });
 
   @override
   State<TradesListPage> createState() => _TradesListPageState();
@@ -22,24 +23,18 @@ class _TradesListPageState extends State<TradesListPage> {
   List<Trade>? tradesFiltered;
   bool isFiltered = false;
 
-
-  Future<List<Trade>> _loadTrades() async {
-    return await FirebaseCloudServices().getAllUserTrades(widget.user.username);
-  }
-
   @override
   Widget build(BuildContext context) {
-
-    return FutureBuilder(
-      future: _loadTrades(),
+    return StreamBuilder(
+      stream: FirebaseCloudServices().getStreamOfTradesByUsername(widget.user.username),
       builder: (context, snapshot) {
         if(snapshot.connectionState == ConnectionState.waiting) { return const AuthLoadingBar(); }
         else if (snapshot.hasError) { return const Center(child: Text("An error occurred while loading trades"),); }
         else  {
           List<Trade> allTrades = snapshot.data!;
-          tradesFiltered = tradesFiltered ?? allTrades;
+          tradesFiltered = isFiltered ? tradesFiltered : allTrades;
+
           return Container(
-            // color: Color(int.parse(widget.user.favouriteColor)),
             height: double.infinity,
             child: SingleChildScrollView(
               child: Column(
@@ -82,7 +77,7 @@ class _TradesListPageState extends State<TradesListPage> {
                             },
                             controller: searchController,
                             decoration: InputDecoration(
-                              hintText: "Search trades...",
+                              hintText: "Search for trades...",
                               hintStyle: TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey[500],
@@ -128,6 +123,7 @@ class _TradesListPageState extends State<TradesListPage> {
                               (trade) => TradeTile(
                             user: widget.user,
                             trade: trade,
+                            isTablet: widget.isTablet,
                             changeBodyWidget: widget.changeBodyWidget,
                           )
                       ).toList(),

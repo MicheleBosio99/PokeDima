@@ -9,20 +9,21 @@ import 'package:pokedex_dima_new/presentation/phone/widgets/auth_loading_bar.dar
 import 'package:pokedex_dima_new/presentation/phone/widgets/pokemon_card_tile.dart';
 import 'package:provider/provider.dart';
 
-class FriendCardsCollection extends StatefulWidget {
+class FriendCardsCollectionTablet extends StatefulWidget {
 
   final String username;
   final User friend;
+  final List<PokemonCard> friendCardsChosen;
   final Function changeBodyWidget;
-  const FriendCardsCollection({super.key, required this.username, required this.changeBodyWidget, required this.friend});
+  const FriendCardsCollectionTablet({super.key, required this.username, required this.changeBodyWidget, required this.friend, required this.friendCardsChosen });
 
   @override
-  State<FriendCardsCollection> createState() => _FriendCardsCollectionState();
+  State<FriendCardsCollectionTablet> createState() => _FriendCardsCollectionTabletState();
 }
 
-class _FriendCardsCollectionState extends State<FriendCardsCollection> {
+class _FriendCardsCollectionTabletState extends State<FriendCardsCollectionTablet> {
   List<PokemonCard> friendCards = [];
-  List<PokemonCard> friendCardsChosen = [];
+  late List<PokemonCard> friendCardsChosen;
 
   Future<void> _loadAsynchronousVariables(email) async {
     friendCards = await FirebaseCloudServices().getPokemonCardsByUsername(widget.friend.username);
@@ -41,6 +42,8 @@ class _FriendCardsCollectionState extends State<FriendCardsCollection> {
 
   @override
   Widget build(BuildContext context) {
+    friendCardsChosen = widget.friendCardsChosen;
+
     return FutureBuilder<void>(
         future: _loadAsynchronousVariables(Provider.of<UserAuthInfo?>(context, listen: false)!.email),
         builder: (context, snapshot) {
@@ -49,141 +52,67 @@ class _FriendCardsCollectionState extends State<FriendCardsCollection> {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            return Stack(
-              children: [
-                Column(children: [
-                  const SizedBox(height: 50),
+            return Column(children: [
+              const SizedBox(height: 20),
 
-                  // TODO: add search bar
+              Text(
+                "${widget.friend.username}'s cards",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
+                ),
+              ),
 
-                  if(friendCards.isNotEmpty)
-                    Expanded(
-                      child: ListView(
-                        children: friendCards.map<Widget>(
-                                (pokemonCard) => PokemonCardTile(
-                                  pokemonCard: pokemonCard,
-                                  changeBodyWidget: widget.changeBodyWidget,
-                                  onLongPressAdd: addCardToFriendCollection,
-                                ))
-                            .toList(),
-                      ),
-                    ),
+              const SizedBox(height: 10),
 
-                  if(friendCards.isEmpty)
-                    Center(
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(int.parse(widget.friend.favouriteColor)),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: Colors.grey[800]!,
-                                  width: 2,
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                child: Text(
-                                  "${widget.friend.username} doesn't have any cards yet, but you can still donate some cards to him/her.",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.grey[500],
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+              if(friendCards.isNotEmpty)
+                Expanded(
+                  child: ListView(
+                    children: friendCards.map<Widget>(
+                            (pokemonCard) => PokemonCardTile(
+                              pokemonCard: pokemonCard,
+                              changeBodyWidget: widget.changeBodyWidget,
+                              onLongPressAdd: addCardToFriendCollection,
+                            ))
+                        .toList(),
+                  ),
+                ),
+
+              if(friendCards.isEmpty)
+                Center(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color(int.parse(widget.friend.favouriteColor)),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.grey[800]!,
+                              width: 2,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            child: Text(
+                              "${widget.friend.username} doesn't have any cards yet, but you can still donate some cards to him/her.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.grey[500],
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                        ]
+                        ),
                       ),
-                    ),
-                ]),
-
-
-                Positioned(
-                  top: -15,
-                  left: -15,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      right: 20,
-                      left: 20,
-                      top: 20,
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            widget.changeBodyWidget(FriendProfile(changeBodyWidget: widget.changeBodyWidget, friend: widget.friend, username: widget.username));
-                          },
-                          icon: Icon(
-                            Icons.arrow_back_rounded,
-                            color: Colors.grey[800],
-                            size: 32,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          'Go back',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+                    ]
                   ),
                 ),
-                Positioned(
-                  top: -15,
-                  right: -15,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      right: 20,
-                      left: 20,
-                      top: 20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'You cards',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        IconButton(
-                          onPressed: () {
-                            widget.changeBodyWidget(
-                              OwnTradeCardsCollection(
-                                friend: widget.friend,
-                                friendCardsChosen: friendCardsChosen,
-                                changeBodyWidget: widget.changeBodyWidget,
-                              ),
-                            );
-                          },
-                          icon: Icon(
-                            Icons.arrow_forward_rounded,
-                            color: Colors.grey[800],
-                            size: 32,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
+            ]);
           }
         });
   }

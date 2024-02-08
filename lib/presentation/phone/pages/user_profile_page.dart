@@ -46,7 +46,6 @@ class _UserProfileState extends State<UserProfile> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          print(user.favouriteColor);
           final backgroundColor = Color(int.parse(user.favouriteColor));
 
           return SingleChildScrollView(

@@ -6,8 +6,10 @@ import 'package:pokedex_dima_new/presentation/phone/widgets/auth_text_field.dart
 import 'package:pokedex_dima_new/presentation/phone/widgets/logo_square_tile.dart';
 
 class SignInTablet extends StatefulWidget {
+
   final Function toggleView;
-  SignInTablet({required this.toggleView});
+
+  const SignInTablet({ super.key, required this.toggleView });
 
   @override
   _SignInTabletState createState() => _SignInTabletState();

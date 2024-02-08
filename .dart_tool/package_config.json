@@ -134,6 +134,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "carousel_slider",
+      "rootUri": "file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/carousel_slider-4.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "cel",
       "rootUri": "file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/cel-0.5.3",
       "packageUri": "lib/",
@@ -582,6 +588,12 @@
       "rootUri": "file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/image_picker_windows-0.2.1+1",
       "packageUri": "lib/",
       "languageVersion": "2.19"
+    },
+    {
+      "name": "infinite_carousel",
+      "rootUri": "file:///C:/Users/bosio/AppData/Local/Pub/Cache/hosted/pub.dev/infinite_carousel-1.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "io",
@@ -1034,7 +1046,7 @@
       "languageVersion": "3.2"
     }
   ],
-  "generated": "2024-02-06T13:56:49.586954Z",
+  "generated": "2024-02-08T09:40:46.075249Z",
   "generator": "pub",
   "generatorVersion": "3.2.3"
 }

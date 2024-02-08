@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_dima_new/application/providers/pokemon_provider.dart';
 import 'package:pokedex_dima_new/presentation/phone/pages/pokemon_info_page.dart';
+import 'package:pokedex_dima_new/presentation/tablet/pages/pokemon_carousel_info_page_tablet.dart';
 import 'package:provider/provider.dart';
 
 
 class FavouriteCard extends StatelessWidget {
 
   final String pokemonName;
+  final bool isTablet;
   final Function changeBodyWidget;
-  const FavouriteCard({ super.key, required this.pokemonName, required this.changeBodyWidget });
+  const FavouriteCard({ super.key, required this.pokemonName, required this.changeBodyWidget, this.isTablet = false });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,8 @@ class FavouriteCard extends StatelessWidget {
               ),
               onPressed: null,
               onLongPress: () {
-                changeBodyWidget(PokemonInfoPage(pokemon: pokemon, changeBodyWidget: changeBodyWidget));
+                if(!isTablet) { changeBodyWidget(PokemonInfoPage(pokemon: pokemon, changeBodyWidget: changeBodyWidget)); }
+                else { changeBodyWidget(PokemonCarouselInfoPageTablet(pokemonName: pokemon.name, changeBodyWidget: changeBodyWidget)); }
               },
               child: Image.network(
                 pokemon.imageUrl,

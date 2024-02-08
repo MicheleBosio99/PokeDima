@@ -5,12 +5,14 @@ import 'package:pokedex_dima_new/domain/user.dart';
 import 'package:pokedex_dima_new/presentation/phone/pages/friend_profile_page.dart';
 import 'package:pokedex_dima_new/presentation/phone/widgets/auth_loading_bar.dart';
 import 'package:pokedex_dima_new/presentation/phone/widgets/friend_list_tile.dart';
+import 'package:pokedex_dima_new/presentation/tablet/pages/friend_profile_page_tablet.dart';
 import 'package:provider/provider.dart';
 
 class FriendList extends StatefulWidget {
 
   final Function changeBodyWidget;
-  const FriendList({ required this.changeBodyWidget});
+  final bool isTablet;
+  const FriendList({ required this.changeBodyWidget, this.isTablet = false });
 
   @override
   State<FriendList> createState() => _FriendListState();
@@ -52,7 +54,6 @@ class _FriendListState extends State<FriendList> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-
 
                         IconButton(
                           padding: EdgeInsets.zero,
@@ -117,7 +118,7 @@ class _FriendListState extends State<FriendList> {
                     endIndent: 50,
                   ),
 
-                  const SizedBox(height: 10,),
+                  const SizedBox(height: 22,),
 
                   if(!isFiltered && friendsFullList.isEmpty)
                     const Text("You have no friends yet."),
@@ -168,14 +169,23 @@ class _FriendListState extends State<FriendList> {
     for(var friend in friends) {
       listOfFriendsTile.add(
         GestureDetector(
-          onTap: () { widget.changeBodyWidget(FriendProfile(changeBodyWidget: widget.changeBodyWidget, friend: friend, username: user.username), index: -1); },
+          onTap: () {
+            print(widget.isTablet);
+            widget.changeBodyWidget(
+              !widget.isTablet ?
+              FriendProfile(changeBodyWidget: widget.changeBodyWidget, friend: friend, username: user.username,)
+              : FriendProfileTablet(changeBodyWidget: widget.changeBodyWidget, friend: friend, username: user.username,),
+              index: -1,
+            );
+          },
           child: FriendListTile(
               friend: friend,
               addFriendButton: isAlreadyFriend ? const SizedBox.shrink() :
               IconButton(
                 onPressed: () async {
                   await FirebaseCloudServices().addFriendWithUsername(user.username, friend.username);
-                  widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1);
+                  !widget.isTablet ? widget.changeBodyWidget(FriendList(changeBodyWidget: widget.changeBodyWidget), index: -1) :
+                  widget.changeBodyWidget(FriendProfileTablet(friend: friend, username: user.username, changeBodyWidget: widget.changeBodyWidget), index: -1);
                 },
                 icon: const Icon(Icons.add_circle_outline_sharp),
                 iconSize: 32,

@@ -9,13 +9,23 @@ class TradeTile extends StatelessWidget {
   final User user;
   final Trade trade;
   final Function changeBodyWidget;
-  const TradeTile({super.key, required this.trade, required this.changeBodyWidget, required this.user});
+  final bool isTablet;
+  const TradeTile({ super.key, required this.trade, required this.changeBodyWidget, required this.user, this.isTablet = false });
 
   @override
   Widget build(BuildContext context) {
     var userUsernames = _getStatusText();
     return TextButton(
-      onPressed: () { changeBodyWidget(TradeInfoPage(user: user, trade: trade, changeBodyWidget: changeBodyWidget,)); },
+      onPressed: () {
+        changeBodyWidget(
+            TradeInfoPage(
+              user: user,
+              trade: trade,
+              changeBodyWidget: changeBodyWidget,
+              isTablet: isTablet,
+            )
+        );
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         child: Container(

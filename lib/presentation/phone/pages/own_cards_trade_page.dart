@@ -59,8 +59,6 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                   return Stack(
                     children: [
                       Column(children: [
-                        // TODO: add search bar
-
                         const SizedBox(height: 60),
 
                         if (userCards.isNotEmpty)
@@ -190,7 +188,7 @@ class _OwnTradeCardsCollectionState extends State<OwnTradeCardsCollection> {
                                       var firstLetterFriend = widget.friend.username[0].toUpperCase();
                                       FirebaseCloudServices().uploadNewTrade(
                                           Trade(
-                                            tradeId: "${firstLetterUsername}${firstLetterUsername}${(numOfTrades + 1).toString()}",
+                                            tradeId: "${firstLetterUsername}${firstLetterFriend}${(numOfTrades + 1).toString()}",
                                             senderUsername: user.username,
                                             receiverUsername: widget.friend.username,
                                             pokemonCardsOffered: [],

@@ -6,13 +6,15 @@ import 'package:pokedex_dima_new/presentation/phone/pages/trades_list_page.dart'
 import 'package:pokedex_dima_new/presentation/phone/widgets/auth_loading_bar.dart';
 import 'package:pokedex_dima_new/presentation/phone/widgets/single_card_show.dart';
 import 'package:pokedex_dima_new/presentation/phone/widgets/user_profile_square.dart';
+import 'package:pokedex_dima_new/presentation/tablet/pages/user_profile_page_tablet.dart';
 
 class TradeInfoPage extends StatelessWidget {
 
   final User user;
   final Trade trade;
   final Function changeBodyWidget;
-  const TradeInfoPage({super.key, required this.user, required this.trade, required this.changeBodyWidget});
+  final bool isTablet;
+  const TradeInfoPage({ super.key, required this.user, required this.trade, required this.changeBodyWidget, this.isTablet = false });
 
   Future<User> _getTradeUser(String username) async {
     return (await FirebaseCloudServices().getUserUsingUsername(username))!;
@@ -25,14 +27,11 @@ class TradeInfoPage extends StatelessWidget {
     return FutureBuilder(
       future: _getTradeUser(isUserSender ? trade.receiverUsername : trade.senderUsername),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const AuthLoadingBar();
-        } else if (snapshot.hasError) {
-          return const Center(
-            child: Text("An error occurred while loading trades"),
-          );
-        } else {
+        if (snapshot.connectionState == ConnectionState.waiting) { return const AuthLoadingBar(); }
+        else if (snapshot.hasError) { return const Center(child: Text("An error occurred while loading trades"),); }
+        else {
           var friend = snapshot.data!;
+
           return Container(
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
@@ -45,12 +44,13 @@ class TradeInfoPage extends StatelessWidget {
                 ],
               ),
             ),
+
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
+
+                  const SizedBox(height: 30,),
+
                   Stack(
                     children: [
                       Center(
@@ -65,11 +65,12 @@ class TradeInfoPage extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        left: 40,
+                        left: isTablet ? 440 : 40,
                         top: -5,
                         child: IconButton(
                           onPressed: () {
-                            changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget));
+                            if(!isTablet) { changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget)); }
+                            else { changeBodyWidget(UserProfileTablet(changeBodyWidget: changeBodyWidget,)); }
                           },
                           icon: Icon(
                             Icons.arrow_back_rounded,
@@ -80,7 +81,7 @@ class TradeInfoPage extends StatelessWidget {
                       ),
 
                       Positioned(
-                        right: 40,
+                        right: isTablet ? 440 : 40,
                         top: -5,
                         child: IconButton(
                           onPressed: () async {
@@ -117,8 +118,8 @@ class TradeInfoPage extends StatelessWidget {
                   Divider(
                     color: Colors.grey[800],
                     thickness: 2,
-                    indent: 50,
-                    endIndent: 50,
+                    indent: isTablet ? 450 : 50,
+                    endIndent: isTablet ? 450 : 50,
                   ),
 
                   _putTextIfTradeIsAcceptedOrRejected(),
@@ -130,7 +131,7 @@ class TradeInfoPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Colors.grey[700]!,
+                          color: isTablet ? Colors.transparent : Colors.grey[700]!,
                           width: 2,
                         ),
                       ),
@@ -141,113 +142,49 @@ class TradeInfoPage extends StatelessWidget {
                           // mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: !isTablet ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
                                 children: [
                                   const SizedBox(width: 20,),
                                   UserProfileSquare(user: isUserSender ? user : friend, backgroundColor: Colors.transparent),
 
-                                  const SizedBox(width: 10,),
-            
+                                  SizedBox(width: isTablet ? 60 : 10,),
+
                                   Icon(
                                     Icons.compare_arrows_rounded,
-                                    size: 48,
+                                    size: isTablet ? 64 : 48,
                                     color: Colors.grey[800],
                                   ),
 
-                                  const SizedBox(width: 10,),
-            
+                                  SizedBox(width: isTablet ? 60 : 10,),
+
                                   UserProfileSquare(user: !isUserSender ? user : friend, backgroundColor: Colors.transparent),
                                   const SizedBox(width: 20,),
                               ]
                             ),
 
                             const SizedBox(height: 20,),
-            
-                            Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Cards offered:",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.grey[800],
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-            
-                            // const SizedBox(height: 5,),
 
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                              child: Container(
-                                // width: 350,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.grey[700]!,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children:
-                                      trade.pokemonCardsOffered.map((card) =>
-                                          SingleCardShowImage(card: card, changeBodyWidget: changeBodyWidget)
-                                      ).toList(),
-                                    ),
-                                  ),
-                                ),
+                            if(isTablet)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  _getOfferedCards(),
+                                  const SizedBox(width: 60,),
+                                  _getRequestedCards(),
+                                ]
                               ),
-                            ),
-            
-                            const SizedBox(height: 20,),
-            
-                            Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Cards requested:",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.grey[800],
-                                  fontWeight: FontWeight.bold,
-                                ),
+
+                            if(!isTablet)
+                              Column(
+                                  children: [
+                                    _getOfferedCards(),
+                                    const SizedBox(height: 20,),
+                                    _getRequestedCards(),
+                                    const SizedBox(height: 20,),
+                                  ]
                               ),
-                            ),
-            
-                            // const SizedBox(height: 10,),
-            
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                              child: Container(
-                                // width: 350,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.grey[700]!,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children:
-                                      trade.pokemonCardsRequested.map((card) =>
-                                          SingleCardShowImage(card: card, changeBodyWidget: changeBodyWidget)
-                                      ).toList(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+
                           ],
                         ),
                       ),
@@ -376,6 +313,99 @@ class TradeInfoPage extends StatelessWidget {
     );
   }
 
+  Widget _getOfferedCards() {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.center,
+          child: Text(
+            "Cards offered:",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.grey[800],
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+          child: Container(
+            // width: 350,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.grey[700]!,
+                width: 2,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:
+                  trade.pokemonCardsOffered.map((card) =>
+                      SingleCardShowImage(card: card, changeBodyWidget: changeBodyWidget)
+                  ).toList(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _getRequestedCards() {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.center,
+          child: Text(
+            "Cards requested:",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.grey[800],
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+          child: Container(
+            // width: 350,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.grey[700]!,
+                width: 2,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:
+                  trade.pokemonCardsRequested.map((card) =>
+                      SingleCardShowImage(card: card, changeBodyWidget: changeBodyWidget)
+                  ).toList(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+
   Color _getBackgroundColor() {
     switch (trade.status) {
       case "pending" || "visualized":
@@ -394,7 +424,7 @@ class TradeInfoPage extends StatelessWidget {
       case "accepted":
         return Column(
           children: [
-            const SizedBox(height: 10,),
+            const SizedBox(height: 20,),
             Align(
               alignment: Alignment.center,
               child: Text(
@@ -428,9 +458,6 @@ class TradeInfoPage extends StatelessWidget {
         );
       default:
         return const SizedBox.shrink();
-    }
-    switch(trade.status) {
-
     }
   }
 }

@@ -76,12 +76,8 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         leading: Builder(
           builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.menu_outlined),
-              color: Colors.white,
-              iconSize: 32,
-              onPressed: () => Scaffold.of(context).openDrawer(),
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            return Image.asset(
+              "lib/images/logos/poke_dima_app_icon.png",
             );
           },
         ),
@@ -101,7 +97,6 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: bodyWidget,
-      drawer: MenuDrawer(changeBodyWidget: changeBodyWidget, ),
       bottomNavigationBar: Container(
         color: Colors.grey[850],
         child: Padding(

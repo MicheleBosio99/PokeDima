@@ -65,7 +65,7 @@ class _PokemonCardTileState extends State<PokemonCardTile> {
 
                   Positioned(
                     top: 0,
-                    left: 0,
+                    left: -5,
                     child: FavouriteIcon(pokemonName: widget.pokemonCard.pokemonName, favouriteType: "cards"),
                   ),
                 ],

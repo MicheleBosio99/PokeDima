@@ -65,10 +65,10 @@ class _PokemonCardsListTabletState extends State<PokemonCardsListTablet> {
               ),
 
               Positioned(
-                bottom: 0,
-                right: 93,
+                left: 0,
+                bottom: 310,
                 child: Icon(
-                  Icons.arrow_downward,
+                  Icons.arrow_back_sharp,
                   color: Colors.grey[800],
                   size: 48,
                 ),

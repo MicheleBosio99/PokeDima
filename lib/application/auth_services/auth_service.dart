@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pokedex_dima_new/data/firebase_cloud_services/firebase_cloud_services.dart';
 import 'package:pokedex_dima_new/domain/user.dart';
 
@@ -34,11 +35,22 @@ class AuthServices {
   }
 
   Future signInWithGoogle() async {
-    // TODO
+     try {
+       final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
+       final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+       final AuthCredential credential = GoogleAuthProvider.credential(
+         accessToken: googleSignInAuthentication.accessToken,
+         idToken: googleSignInAuthentication.idToken,
+       );
+       final UserCredential result = await _firebaseAuth.signInWithCredential(credential);
+       final User? user = result.user;
+       return _userFromFirebaseUser(user);
+     } catch (error) { return null; }
   }
 
   Future resetForgottenPassword(String email) async {
-    // TODO
+    try { return await _firebaseAuth.sendPasswordResetEmail(email: email); }
+    catch (error) { return null; }
   }
 
   Future signOut() async {

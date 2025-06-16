@@ -51,66 +51,69 @@ class TradeInfoPage extends StatelessWidget {
 
                   const SizedBox(height: 30,),
 
-                  Stack(
-                    children: [
-                      Center(
-                        child: Text(
-                          "Trade ${trade.tradeId}",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 26,
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.bold,
+                  Container(
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: Text(
+                            "Trade ${trade.tradeId}",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 26,
+                              color: Colors.grey[800],
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        left: isTablet ? 440 : 40,
-                        top: -5,
-                        child: IconButton(
-                          onPressed: () {
-                            if(!isTablet) { changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget)); }
-                            else { changeBodyWidget(UserProfileTablet(changeBodyWidget: changeBodyWidget,)); }
-                          },
-                          icon: Icon(
-                            Icons.arrow_back_rounded,
-                            color: Colors.grey[800],
-                            size: 32,
+                        Positioned(
+                          left: isTablet ? 440 : 40,
+                          top: -5,
+                          child: IconButton(
+                            onPressed: () {
+                              if(!isTablet) { changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget)); }
+                              else { changeBodyWidget(UserProfileTablet(changeBodyWidget: changeBodyWidget,)); }
+                            },
+                            icon: Icon(
+                              Icons.arrow_back_rounded,
+                              color: Colors.grey[800],
+                              size: 32,
+                            ),
                           ),
                         ),
-                      ),
 
-                      Positioned(
-                        right: isTablet ? 440 : 40,
-                        top: -5,
-                        child: IconButton(
-                          onPressed: () async {
-                            await FirebaseCloudServices().deleteTrade(trade);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                duration: const Duration(seconds: 2),
-                                content: Center(
-                                  child: Text(
-                                    "The trade has been deleted",
-                                    style: TextStyle(
-                                      color: Colors.grey[200],
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                        Positioned(
+                          right: isTablet ? 440 : 40,
+                          top: -5,
+                          child: IconButton(
+                            onPressed: () async {
+                              await FirebaseCloudServices().deleteTrade(trade);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  duration: const Duration(seconds: 2),
+                                  content: Center(
+                                    child: Text(
+                                      "The trade has been deleted",
+                                      style: TextStyle(
+                                        color: Colors.grey[200],
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                            changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget));
-                          },
-                          icon: Icon(
-                            Icons.delete,
-                            color: Colors.grey[800],
-                            size: 32,
+                              );
+                              if(!isTablet) { changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget)); }
+                              else { changeBodyWidget(UserProfileTablet(changeBodyWidget: changeBodyWidget,)); }
+                            },
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.grey[800],
+                              size: 32,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
 
                   const SizedBox(height: 10,),
@@ -229,7 +232,8 @@ class TradeInfoPage extends StatelessWidget {
                                         ),
                                       ),
                                     );
-                                    changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget));
+                                    if(!isTablet) { changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget)); }
+                                    else { changeBodyWidget(UserProfileTablet(changeBodyWidget: changeBodyWidget,)); }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
@@ -280,7 +284,8 @@ class TradeInfoPage extends StatelessWidget {
                                         ),
                                       ),
                                     );
-                                    changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget));
+                                    if(!isTablet) { changeBodyWidget(TradesListPage(user: user, changeBodyWidget: changeBodyWidget)); }
+                                    else { changeBodyWidget(UserProfileTablet(changeBodyWidget: changeBodyWidget,)); }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.transparent,

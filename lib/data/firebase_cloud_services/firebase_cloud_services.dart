@@ -60,13 +60,14 @@ class FirebaseCloudServices {
   Stream<List<PokemonCard>> getStreamOfPokemonCardsByUsername(String username) {
     if(username.isEmpty) { return const Stream.empty(); }
     return _firestore.collection(_cardsCollectionName).doc(username).snapshots().map((snapshot) {
+      if (!snapshot.exists) { return []; }
       var cards = snapshot.data()?[_cardsField] as List<dynamic>? ?? [];
       return cards.map((card) => PokemonCard.fromJson(card)).toList();
     });
   }
 
 
-  void _addCardsToUser(String username, List<PokemonCard> cards) async {
+  Future<void> _addCardsToUser(String username, List<PokemonCard> cards) async {
     try {
       CollectionReference collectionReference = _firestore.collection(_cardsCollectionName);
       DocumentSnapshot documentSnapshot = await collectionReference.doc(username).get();
@@ -74,10 +75,6 @@ class FirebaseCloudServices {
       if(documentSnapshot.exists) {
         await collectionReference.doc(username).update({
           _cardsField: FieldValue.arrayUnion(cards.map((card) => card.toJson()).toList()),
-        });
-      } else {
-        await collectionReference.doc(username).set({
-          _cardsField: cards.map((card) => card.toJson()).toList(),
         });
       }
 
@@ -87,7 +84,7 @@ class FirebaseCloudServices {
   }
 
 
-  void _removeCardsFromUser(String username, List<PokemonCard> cards) async {
+  Future<void> _removeCardsFromUser(String username, List<PokemonCard> cards) async {
     try {
       CollectionReference collectionReference = _firestore.collection(_cardsCollectionName);
       DocumentSnapshot documentSnapshot = await collectionReference.doc(username).get();
@@ -95,10 +92,6 @@ class FirebaseCloudServices {
       if(documentSnapshot.exists) {
         await collectionReference.doc(username).update({
           _cardsField: FieldValue.arrayRemove(cards.map((card) => card.toJson()).toList()),
-        });
-      } else {
-        await collectionReference.doc(username).set({
-          _cardsField: cards.map((card) => card.toJson()).toList(),
         });
       }
 
@@ -146,6 +139,8 @@ class FirebaseCloudServices {
           'bio': 'I am a new user!',
           'favouriteColor': '0xEEEEEEFF',
           'friendsUsernames': [],
+          'favourites_pokemon': [],
+          'favourites_cards': [],
           'accountCreationDate': '${_twoDigits(DateTime.now().day)}/${_twoDigits(DateTime.now().month)}/${DateTime.now().year}',
         });
       } else {
@@ -610,12 +605,12 @@ class FirebaseCloudServices {
   }
 
 
-  void _updateTradeStatusInCards(Trade trade) {
-    _removeCardsFromUser(trade.senderUsername, trade.pokemonCardsOffered);
-    _removeCardsFromUser(trade.receiverUsername, trade.pokemonCardsRequested);
+  void _updateTradeStatusInCards(Trade trade) async {
+    await _removeCardsFromUser(trade.senderUsername, trade.pokemonCardsOffered);
+    await _removeCardsFromUser(trade.receiverUsername, trade.pokemonCardsRequested);
 
-    _addCardsToUser(trade.senderUsername, trade.pokemonCardsRequested);
-    _addCardsToUser(trade.receiverUsername, trade.pokemonCardsOffered);
+    await _addCardsToUser(trade.senderUsername, trade.pokemonCardsRequested);
+    await _addCardsToUser(trade.receiverUsername, trade.pokemonCardsOffered);
   }
 
 

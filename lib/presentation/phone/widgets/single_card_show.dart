@@ -24,7 +24,7 @@ class SingleCardShowImage extends StatelessWidget {
           ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           child: FadeInImage.assetNetwork(
             placeholder: 'lib/images/icons/bulbasaur_icon.png',
             fadeOutDuration: const Duration(milliseconds: 100),
